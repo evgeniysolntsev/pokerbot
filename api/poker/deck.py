@@ -9,8 +9,7 @@ class Deck(object):
         self.deck = []
         for suit in State.SUITS:
             for rank in State.RANKS:
-                card = Card(rank, suit)
-                self.deck.append(card)
+                self.deck.append(Card(rank, suit))
 
     def shuffle(self):
         random.shuffle(self.deck)

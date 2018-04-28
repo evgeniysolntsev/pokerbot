@@ -304,7 +304,7 @@ class ComputerAction(object):
     @staticmethod
     def print_scores():
         for player in Computer.players:
-            print(colored(player.get_current_action().combination_str, 'green'))
+            print(colored(player.get_current_action().combination_str, 'blue'))
 
     @staticmethod
     def random_dealer():
