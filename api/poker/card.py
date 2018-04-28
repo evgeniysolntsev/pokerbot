@@ -4,19 +4,49 @@ class Card(object):
         self.suit = suit
 
     def __str__(self):
-        if self.rank == 14:
-            rank = 'A'
-        elif self.rank == 13:
-            rank = 'K'
-        elif self.rank == 12:
-            rank = 'Q'
-        elif self.rank == 11:
-            rank = 'J'
-        elif self.rank == 10:
-            rank = 'T'
-        else:
+        converted_map = {
+            14: 'A',
+            13: 'K',
+            12: 'Q',
+            11: 'J',
+            10: 'T',
+            's': u"\u2660",
+            'h': u"\u2764",
+            'd': u"\u2666",
+            'c': u"\u2663"
+        }
+        rank = converted_map.get(self.rank)
+        suit = converted_map.get(self.suit)
+        if not rank:
             rank = self.rank
-        return str(rank) + self.suit
+        if not suit:
+            suit = self.suit
+        return str(rank) + str(suit)
+
+    def rank_str(self):
+        converted_map = {
+            14: 'A',
+            13: 'K',
+            12: 'Q',
+            11: 'J',
+            10: 'T'
+        }
+        rank = converted_map.get(self.rank)
+        if not rank:
+            rank = self.rank
+        return str(rank)
+
+    def suit_str(self):
+        converted_map = {
+            's': u"\u2660",
+            'h': u"\u2764",
+            'd': u"\u2666",
+            'c': u"\u2663"
+        }
+        suit = converted_map.get(self.suit)
+        if not suit:
+            suit = self.suit
+        return str(suit)
 
     def __eq__(self, other):
         return self.rank == other.rank

@@ -1,5 +1,5 @@
+from api.helpers.singleton import singleton
 from api.poker.computer_action import ComputerAction
-from api.utils.singleton import singleton
 
 
 @singleton

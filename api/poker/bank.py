@@ -1,5 +1,5 @@
 from api.dnn import config
-from api.utils.singleton import singleton
+from api.helpers.singleton import singleton
 
 
 @singleton

@@ -1,11 +1,11 @@
 import random
 
 from api.dnn import config
+from api.helpers.singleton import singleton
 from api.poker.bot import Bot
 from api.poker.card import Card
 from api.poker.deck import Deck
 from api.poker.state import State
-from api.utils.singleton import singleton
 
 
 @singleton
@@ -220,10 +220,7 @@ class Computer(object):
 
         if flag:
             total_point = self.get_total_point(comb_level=comb_level, hand=royal)
-            if State.output_in_console_comb:
-                print('Royal Flush')
-
-            self.player.set_total_point(total_point=total_point)
+            self.player.set_full_combination(total_point=total_point, comb_level=comb_level, hand=royal)
         else:
             self.is_straight_flush()
 
@@ -241,9 +238,7 @@ class Computer(object):
                 sort = False
         if flag:
             total_point = self.get_total_point(comb_level=comb_level, hand=straight_flush, sort=sort)
-            if State.output_in_console_comb:
-                print('Straight Flush')
-            self.player.set_total_point(total_point=total_point)
+            self.player.set_full_combination(total_point=total_point, comb_level=comb_level, hand=straight_flush)
         else:
             self.is_four()
 
@@ -272,9 +267,7 @@ class Computer(object):
                 flag = False
         if flag:
             total_point = self.get_total_point(comb_level=comb_level, hand=four)
-            if State.output_in_console_comb:
-                print('Four of a Kind')
-            self.player.set_total_point(total_point=total_point)
+            self.player.set_full_combination(total_point=total_point, comb_level=comb_level, hand=four)
         else:
             self.is_full()
 
@@ -286,9 +279,7 @@ class Computer(object):
             flag = True
         if flag:
             total_point = self.get_total_point(comb_level=comb_level, hand=full, sort=False)
-            if State.output_in_console_comb:
-                print('Full House')
-            self.player.set_total_point(total_point=total_point)
+            self.player.set_full_combination(total_point=total_point, comb_level=comb_level, hand=full)
         else:
             self.is_flush()
 
@@ -320,9 +311,7 @@ class Computer(object):
                 ic += 1
         if flag:
             total_point = self.get_total_point(comb_level=comb_level, hand=flush)
-            if State.output_in_console_comb:
-                print('Flush')
-            self.player.set_total_point(total_point=total_point)
+            self.player.set_full_combination(total_point=total_point, comb_level=comb_level, hand=flush)
         else:
             self.is_straight()
 
@@ -340,9 +329,7 @@ class Computer(object):
                 sort = False
         if flag:
             total_point = self.get_total_point(comb_level=comb_level, hand=straight, sort=sort)
-            if State.output_in_console_comb:
-                print('Straight')
-            self.player.set_total_point(total_point=total_point)
+            self.player.set_full_combination(total_point=total_point, comb_level=comb_level, hand=straight)
         else:
             self.is_three()
 
@@ -354,9 +341,7 @@ class Computer(object):
             flag = True
         if flag:
             total_point = self.get_total_point(comb_level=comb_level, hand=three, sort=False)
-            if State.output_in_console_comb:
-                print('Three of a Kind')
-            self.player.set_total_point(total_point=total_point)
+            self.player.set_full_combination(total_point=total_point, comb_level=comb_level, hand=three)
         else:
             self.is_two()
 
@@ -368,9 +353,7 @@ class Computer(object):
             flag = True
         if flag:
             total_point = self.get_total_point(comb_level=comb_level, hand=two, sort=False)
-            if State.output_in_console_comb:
-                print('Two Pair')
-            self.player.set_total_point(total_point=total_point)
+            self.player.set_full_combination(total_point=total_point, comb_level=comb_level, hand=two)
         else:
             self.is_one()
 
@@ -385,9 +368,7 @@ class Computer(object):
                 total_point = self.get_total_point(comb_level=comb_level, hand=one, sort=False)
             else:
                 total_point = self.get_pre_flop_total_point(comb_level=comb_level, hand=one)
-            if State.output_in_console_comb:
-                print('One Pair')
-            self.player.set_total_point(total_point=total_point)
+            self.player.set_full_combination(total_point=total_point, comb_level=comb_level, hand=one)
         else:
             self.is_high()
 
@@ -397,6 +378,4 @@ class Computer(object):
             total_point = self.get_total_point(comb_level=comb_level, hand=self.player_sorted_hand)
         else:
             total_point = self.get_pre_flop_total_point(comb_level=comb_level, hand=self.player_sorted_hand)
-        if State.output_in_console_comb:
-            print('High Card')
-        self.player.set_total_point(total_point=total_point)
+        self.player.set_full_combination(total_point=total_point, comb_level=comb_level, hand=self.player_sorted_hand)

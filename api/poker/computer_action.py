@@ -3,11 +3,11 @@ import random
 from termcolor import colored
 
 from api.dnn import config
+from api.helpers.singleton import singleton
 from api.poker.bank import Bank
 from api.poker.computer import Computer
 from api.poker.deck import Deck
 from api.poker.state import State
-from api.utils.singleton import singleton
 
 
 @singleton
@@ -54,7 +54,7 @@ class ComputerAction(object):
                 Computer.deck.deck.remove(card)
 
     def compute_count_winners(self):
-        self.total_points = [p.total_point for p in Computer.players]
+        self.total_points = [p.get_max_total_point() for p in Computer.players]
         self.max_total_points = max(self.total_points)
         self.count_winners = self.total_points.count(self.max_total_points)
 
@@ -63,7 +63,7 @@ class ComputerAction(object):
         has_all_in = False
         player_winner = None
         for p in Computer.players:
-            if p.total_point == self.max_total_points:
+            if p.get_max_total_point() == self.max_total_points:
                 player_winner = p
                 if p.get_all_in():
                     has_all_in = True
@@ -80,7 +80,7 @@ class ComputerAction(object):
     def set_winners(self, player):
         if self.is_winners_end():
             return 0
-        elif self.max_total_points == player.total_point:
+        elif self.max_total_points == player.get_max_total_point():
             if self.is_draw():
                 self.set_draw(player)
             elif player.get_all_in():
@@ -95,27 +95,27 @@ class ComputerAction(object):
                     player.add_points(Bank.bank)
                     Bank.set_bank(bank=0)
                 player.set_all_in(False)
-                player.set_total_point(0)
+                player.set_null_total_points()
             else:
                 if config.OUTPUT_IN_CONSOLE:
                     print(colored('{} get : {} points'.format(player.id, Bank.bank), 'red'))
                 player.add_points(Bank.bank)
                 Bank.set_bank(bank=0)
-                player.set_total_point(0)
+                player.set_null_total_points()
 
             if self.is_winners_end():
                 return 0
             for p in Computer.players:
-                if p.get_all_in() and not p.folded and p.total_point == self.max_total_points:
+                if p.get_all_in() and not p.folded and p.get_max_total_point() == self.max_total_points:
                     self.set_winners(p)
             for p in Computer.players:
-                if not p.folded and p.total_point == self.max_total_points:
+                if not p.folded and p.get_max_total_point() == self.max_total_points:
                     self.set_winners(p)
 
     def set_draw(self, player):
         if self.is_winners_end():
             return 0
-        elif player.total_point == self.max_total_points:
+        elif player.get_max_total_point() == self.max_total_points:
             if player.get_all_in():
                 if self.count_winners > 1:
                     draw_all_in_bank = player.get_all_in_bank() / (self.count_winners - 1)
@@ -133,7 +133,7 @@ class ComputerAction(object):
                     player.add_points(Bank.bank)
                     Bank.set_bank(bank=0)
                 player.set_all_in(False)
-                player.set_total_point(0)
+                player.set_null_total_points()
             else:
                 draw_bank = Bank.bank / self.count_winners
                 if Bank.bank >= draw_bank:
@@ -146,15 +146,15 @@ class ComputerAction(object):
                         print(colored('{} get : {} points'.format(player.id, Bank.bank), 'red'))
                     player.add_points(Bank.bank)
                     Bank.set_bank(bank=0)
-                player.set_total_point(0)
+                player.set_null_total_points()
 
         if self.is_winners_end():
             return 0
         for p in Computer.players:
-            if p.get_all_in() and not p.folded and p.total_point == self.max_total_points:
+            if p.get_all_in() and not p.folded and p.get_max_total_point() == self.max_total_points:
                 self.set_draw(p)
         for p in Computer.players:
-            if not p.folded and p.total_point == self.max_total_points:
+            if not p.folded and p.get_max_total_point() == self.max_total_points:
                 self.set_draw(p)
 
     def is_winners_end(self):
@@ -169,19 +169,13 @@ class ComputerAction(object):
             return False
 
     def get_index_winner(self):
-        return [player.total_point for player in Computer.players].index(self.get_max_point())
+        return [player.get_max_total_point() for player in Computer.players].index(self.get_max_point())
 
     def get_winner(self):
         max_point = self.get_max_point()
         for player in Computer.players:
-            if player.total_point == max_point:
+            if player.get_max_total_point() == max_point:
                 return player
-
-    def print_table(self):
-        cs = ''
-        for c in Computer.players[0].table:
-            cs = cs + self.convert_suit(c) + '  '
-        print(colored('Table: ' + cs, 'blue'))
 
     def print_winner(self):
         self.print_scores()
@@ -191,7 +185,15 @@ class ComputerAction(object):
         else:
             print(colored(str(self.get_winner().id) + ' is winner ', 'red'))
 
-    def compute_points(self):
+    @staticmethod
+    def print_table():
+        cs = ''
+        for c in Computer.players[0].table:
+            cs = cs + str(c) + '  '
+        print(colored('Table: ' + cs, 'blue'))
+
+    @staticmethod
+    def compute_points():
         for player in Computer.players:
             full_hand = []
             full_hand.extend(player.hand)
@@ -199,7 +201,7 @@ class ComputerAction(object):
             if State.output_in_console:
                 cs = ''
                 for c in player.hand:
-                    cs = cs + self.convert_suit(c) + '  '
+                    cs = cs + str(c) + '  '
                 print(colored(str(player.id) + ': ' + cs[:-1], 'yellow'))
             Computer.player_sorted_hand = sorted(full_hand, reverse=True)
             Computer.set_player(player=player)
@@ -251,8 +253,6 @@ class ComputerAction(object):
             print(colored('{} points: {}'.format(player.id, player.points), 'green'))
             player.did_action = False
             player.set_winning_points_all_in()
-        if not State.river:
-            State.next()
 
     @staticmethod
     def is_continue():
@@ -276,6 +276,8 @@ class ComputerAction(object):
         if i == 1:
             return True
         else:
+            if not State.river:
+                State.next()
             return False
 
     @staticmethod
@@ -289,7 +291,7 @@ class ComputerAction(object):
 
     @staticmethod
     def get_max_point():
-        return max([player.total_point for player in Computer.players])
+        return max([player.get_max_total_point() for player in Computer.players])
 
     @staticmethod
     def get_max_bank():
@@ -302,20 +304,7 @@ class ComputerAction(object):
     @staticmethod
     def print_scores():
         for player in Computer.players:
-            print(colored(str(player.id) + ' combination score: ' + str(player.total_point), 'green'))
-
-    @staticmethod
-    def convert_suit(suitString=None):
-        suitString = str(suitString)
-        if suitString.__contains__('s'):
-            suitString = suitString.replace('s', u"\u2660")
-        elif suitString.__contains__('h'):
-            suitString = suitString.replace('h', u"\u2764")
-        elif suitString.__contains__('d'):
-            suitString = suitString.replace('d', u"\u2666")
-        elif suitString.__contains__('c'):
-            suitString = suitString.replace('c', u"\u2663")
-        return suitString
+            print(colored(player.get_current_action().combination_str, 'green'))
 
     @staticmethod
     def random_dealer():

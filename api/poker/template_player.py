@@ -10,7 +10,6 @@ class TemplatePlayer:
         self.points = config.START_POINTS
         self.hand = []
         self.table = []
-        self.total_point = 0
         self.dealer = False
         self.small_blind = False
         self.big_blind = False
@@ -44,8 +43,33 @@ class TemplatePlayer:
     def set_table(self, table=None):
         self.table = table
 
-    def set_total_point(self, total_point=None):
-        self.total_point = total_point
+    def set_full_combination(self, total_point=None, comb_level=None, hand=None):
+        current_action = self.get_current_action()
+        current_action.total_point = total_point
+        if config.OUTPUT_IN_CONSOLE:
+            combination_map = {
+                1: '{} combination: high {}{}{}{}{}',
+                2: '{} combination: one pair {}{} with high {}{}{}',
+                3: '{} combination: two pair {}{}{}{} with high {}',
+                4: '{} combination: three of kind {}{}{} with high {}{}',
+                5: '{} combination: straight {}{}{}{}{}',
+                6: '{} combination: flush {}{}{}{}{}',
+                7: '{} combination: full house {}{}{}{}{}',
+                8: '{} combination: four {}{}{}{} with high {}',
+                9: '{} combination: straight flush {}{}{}{}{}',
+                10: '{} combination: royal flush {}{}{}{}{}',
+            }
+            current_action.combination_str = combination_map.get(comb_level).format(
+                self.id,
+                str(hand[0]) if len(hand) > 0 else '',
+                str(hand[1]) if len(hand) > 1 else '',
+                str(hand[2]) if len(hand) > 2 else '',
+                str(hand[3]) if len(hand) > 3 else '',
+                str(hand[4]) if len(hand) > 4 else ''
+            )
+
+    def get_max_total_point(self):
+        return max([state.total_point for state in self.action_states.values()])
 
     def set_player_state(self, d=False, sb=False, bb=False):
         self.dealer = d
@@ -56,8 +80,6 @@ class TemplatePlayer:
         return self.action_states.__getitem__(key)
 
     def get_current_action(self):
-        current_action = self.action_states.__getitem__(State.get())
-        current_action.total_point = self.total_point
         return self.action_states.__getitem__(State.get())
 
     def reset_action_states(self):
@@ -85,9 +107,13 @@ class TemplatePlayer:
     def set_all_in(self, all_in=True):
         self.get_current_action().all_in = all_in
 
+    def set_null_total_points(self):
+        for state in self.action_states.values():
+            state.total_point = 0
+
     def set_folded(self):
         self.get_current_action().folded = True
-        self.total_point = 0
+        self.set_null_total_points()
 
     def set_all_in_bank(self, bank=None):
         self.all_in_bank = bank

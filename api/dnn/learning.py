@@ -1,10 +1,10 @@
 from api.dnn import config
 from api.dnn.model import Model
+from api.helpers.singleton import singleton
+from api.helpers.utils import get_array_from_player
 from api.poker.computer import Computer
 from api.poker.computer_action import ComputerAction
 from api.poker.state import State
-from api.utils.data_util import get_array_from_player
-from api.utils.singleton import singleton
 
 
 @singleton
