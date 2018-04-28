@@ -52,3 +52,7 @@ fabric.properties
 # Editor-based Rest Client
 .idea/httpRequests
 
+api/dnn/__pycache__/
+api/poker/__pycache__/
+api/utils/__pycache__/
+logs/
