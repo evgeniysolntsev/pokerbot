@@ -193,7 +193,7 @@ class TemplatePlayer:
         if self.get_bank() == ComputerAction.get_max_bank() and self.get_bank() >= Bank.step:
             print('{} check'.format(self.id))
             return 0
-        if self.points > ComputerAction.get_max_bank() :
+        if self.points > ComputerAction.get_max_bank():
             self.set_bank(ComputerAction.get_max_bank())
             Bank.add_to_bank(points=ComputerAction.get_max_bank())
             self.sub_points(ComputerAction.get_max_bank())
