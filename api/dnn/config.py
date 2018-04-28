@@ -17,3 +17,4 @@ SHOW_METRIC = True
 # PLAYING
 START_POINTS = 50
 NAMES = {"generous", "greedy", "nihilist", "beginner", "cub", "alliner", "folder", "checker", "alien", "grown", "child"}
+PATH_DNN = "C:\\Users\evgeniy\PycharmProjects\\pokerbot\saved_dnn\example"

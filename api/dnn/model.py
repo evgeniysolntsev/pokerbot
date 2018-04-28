@@ -19,7 +19,7 @@ class Model:
         dnn = tflearn.DNN(net)
         self.dnn = dnn
         if config.LOADING_MODEL:
-            self.load('C:\\Users\evgeniy\PycharmProjects\\pokerbot\saved_dnn\example')
+            self.load(config.PATH_DNN)
 
     def load(self, path=None):
         self.dnn.load(path)
