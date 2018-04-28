@@ -8,7 +8,7 @@ from api.poker.state import State
 
 
 @singleton
-class LearningModel:
+class LearningMode:
     def __init__(self):
         self.X = []
         self.Y = []

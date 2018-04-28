@@ -3,7 +3,7 @@ from api.poker.computer_action import ComputerAction
 
 
 @singleton
-class GameAction(object):
+class GamingMode(object):
     def __init__(self):
         ComputerAction.random_dealer()
         while ComputerAction.is_end_game():
