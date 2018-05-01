@@ -54,7 +54,7 @@ class ComputerAction(object):
                 Computer.deck.deck.remove(card)
 
     def compute_count_winners(self):
-        self.total_points = [p.get_max_total_point() for p in Computer.players]
+        self.total_points = [p.get_max_total_point() if not p.get_folded() else 0 for p in Computer.players]
         self.max_total_points = max(self.total_points)
         self.count_winners = self.total_points.count(self.max_total_points)
 
@@ -118,7 +118,7 @@ class ComputerAction(object):
         elif player.get_max_total_point() == self.max_total_points:
             if player.get_all_in():
                 if self.count_winners > 1:
-                    draw_all_in_bank = player.get_all_in_bank() / (self.count_winners - 1)
+                    draw_all_in_bank = player.get_all_in_bank() / self.count_winners
                 else:
                     draw_all_in_bank = player.get_all_in_bank()
                 print("bad draw")
@@ -132,8 +132,6 @@ class ComputerAction(object):
                         print(colored('{} get : {} points'.format(player.id, Bank.bank), 'red'))
                     player.add_points(Bank.bank)
                     Bank.set_bank(bank=0)
-                player.set_all_in(False)
-                player.set_null_total_points()
             else:
                 draw_bank = Bank.bank / self.count_winners
                 if Bank.bank >= draw_bank:
@@ -146,7 +144,7 @@ class ComputerAction(object):
                         print(colored('{} get : {} points'.format(player.id, Bank.bank), 'red'))
                     player.add_points(Bank.bank)
                     Bank.set_bank(bank=0)
-                player.set_null_total_points()
+            player.set_folded()
 
         if self.is_winners_end():
             return 0
@@ -174,8 +172,9 @@ class ComputerAction(object):
     def get_winner(self):
         max_point = self.get_max_point()
         for player in Computer.players:
-            if player.get_max_total_point() == max_point:
-                return player
+            if not player.get_folded():
+                if player.get_max_total_point() == max_point:
+                    return player
 
     def print_winner(self):
         self.print_scores()
@@ -202,7 +201,8 @@ class ComputerAction(object):
                 cs = ''
                 for c in player.hand:
                     cs = cs + str(c) + '  '
-                print(colored(str(player.id) + ': ' + cs[:-1], 'yellow'))
+                print(colored('{} : {} \t\t\t\t points : {:.1f}'.format(str(player.id), cs[:-1], player.points),
+                              'yellow'))
             Computer.player_sorted_hand = sorted(full_hand, reverse=True)
             Computer.set_player(player=player)
             if not State.pre_flop:
@@ -219,7 +219,7 @@ class ComputerAction(object):
                 Bank.set_bet(bet=0)
                 d = player.get_next()
                 d.set_d()
-                if config.N_PLAYERS > 2:
+                if config.N_ALL_PLAYERS > 2:
                     sb = d.get_next()
                     sb.set_sb()
                     bb = sb.get_next()
@@ -236,8 +236,8 @@ class ComputerAction(object):
                 player.get_previous().set_d()
                 print(colored('{} leaving game'.format(player.id), 'red'))
                 Computer.players.remove(player)
-                config.N_PLAYERS = config.N_PLAYERS - 1
-                if config.N_PLAYERS == 1:
+                config.N_ALL_PLAYERS = config.N_ALL_PLAYERS - 1
+                if config.N_ALL_PLAYERS == 1:
                     winner = Computer.players[0]
                     print(colored('winner {} with {} points'.format(winner.id, winner.points), 'red'))
                     return False
@@ -250,7 +250,6 @@ class ComputerAction(object):
     @staticmethod
     def end_stage():
         for player in Computer.players:
-            print(colored('{} points: {}'.format(player.id, player.points), 'green'))
             player.did_action = False
             player.set_winning_points_all_in()
 
@@ -282,7 +281,7 @@ class ComputerAction(object):
 
     @staticmethod
     def is_all_did_action():
-        return [player.did_action for player in Computer.players].count(True) != config.N_PLAYERS
+        return [player.did_action for player in Computer.players].count(True) != config.N_ALL_PLAYERS
 
     @staticmethod
     def default_deck():
@@ -308,7 +307,7 @@ class ComputerAction(object):
 
     @staticmethod
     def random_dealer():
-        Computer.players[random.randint(0, config.N_PLAYERS - 1)].set_d()
+        Computer.players[random.randint(0, config.N_ALL_PLAYERS - 1)].set_d()
 
     @staticmethod
     def pull_table():

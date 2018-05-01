@@ -1,3 +1,4 @@
+from api.dnn import config
 from api.dnn.model import Model
 from api.helpers.utils import get_array_from_player
 from api.poker.bank import Bank
@@ -7,6 +8,11 @@ from api.poker.template_player import TemplatePlayer
 class Bot(TemplatePlayer):
     def __init__(self):
         super().__init__()
+        name = config.BOT_NAMES.pop()
+        if len(name) < config.MAX_LENGTH_NAME:
+            while len(name) != config.MAX_LENGTH_NAME:
+                name = name + " "
+        self.id = name
         self.predict_result = 0
         self.result_percent = 0
         self.subtracted_result_percent = 0
@@ -27,8 +33,9 @@ class Bot(TemplatePlayer):
             bet = self.one_percent_score * self.subtracted_result_percent
             self.do_bet(bet=bet)
         elif self.call_limit < self.predict_result < self.bet_limit:
-            percent_bet = int(Bank.bet / self.one_percent_score)
-            if self.subtracted_result_percent > percent_bet:
+            if self.one_percent_score == 0:
+                self.do_fold()
+            elif self.subtracted_result_percent > int(Bank.bet / self.one_percent_score):
                 self.do_call()
             else:
                 self.do_fold()

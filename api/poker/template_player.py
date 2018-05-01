@@ -6,7 +6,7 @@ from api.poker.state_action import ActionState
 
 class TemplatePlayer:
     def __init__(self):
-        self.id = config.NAMES.pop()
+        self.id = None
         self.points = config.START_POINTS
         self.hand = []
         self.table = []
@@ -102,7 +102,7 @@ class TemplatePlayer:
         self.pre_game_take_points()
 
     def set_bank(self, bank):
-        self.get_current_action().bank = bank
+        self.get_current_action().bank = self.get_current_action().bank + bank
 
     def set_all_in(self, all_in=True):
         self.get_current_action().all_in = all_in
@@ -181,8 +181,8 @@ class TemplatePlayer:
         from api.poker.computer_action import Computer
         from api.poker.computer_action import ComputerAction
         if ComputerAction.get_max_bank() != 0 and bet < (ComputerAction.get_max_bank() * 2):
-            if ComputerAction.get_max_bank() * 2 > self.points:
-                bet = ComputerAction.get_max_bank()
+            if ComputerAction.get_max_bank() * 2 >= self.points:
+                bet = self.points
             else:
                 bet = ComputerAction.get_max_bank() * 2
         if bet > self.points:
@@ -202,7 +202,7 @@ class TemplatePlayer:
                 Bank.add_to_bank(bet)
                 self.points = self.points - bet
                 self.set_bank(bet)
-            print('{} call :{}'.format(self.id, bet))
+            print('{} call: {}'.format(self.id, bet))
             return 0
         elif bet > ComputerAction.get_max_bank():
             self.points = self.points - bet
@@ -212,17 +212,22 @@ class TemplatePlayer:
             player.did_action = False
         Bank.set_bet(bet=bet)
         self.did_action = True
-        print('{} bet :{}'.format(self.id, self.get_bank()))
+        print('{} bet: {}'.format(self.id, self.get_bank()))
 
     def do_call(self):
         from api.poker.computer_action import ComputerAction
-        if self.get_bank() == ComputerAction.get_max_bank() and self.get_bank() >= Bank.step:
+        if (self.get_bank() >= ComputerAction.get_max_bank() and self.get_bank() >= Bank.step) or ComputerAction.get_max_bank() < Bank.step:
             print('{} check'.format(self.id))
             return 0
-        if self.points > ComputerAction.get_max_bank():
-            self.set_bank(ComputerAction.get_max_bank())
-            Bank.add_to_bank(points=ComputerAction.get_max_bank())
-            self.sub_points(ComputerAction.get_max_bank())
+        calling_points = ComputerAction.get_max_bank()
+        if self.points > calling_points:
+            if self.get_bank() != 0:
+                calling_points = calling_points - self.get_bank()
+            else:
+                calling_points = ComputerAction.get_max_bank()
+            self.set_bank(calling_points)
+            Bank.add_to_bank(points=calling_points)
+            self.sub_points(calling_points)
         else:
             self.set_all_in()
             self.set_bank(self.points)
@@ -246,7 +251,7 @@ class TemplatePlayer:
         from api.poker.computer import Computer
         player_index = Computer.players.index(self)
         player_next_index = player_index + 1
-        if player_next_index < config.N_PLAYERS:
+        if player_next_index < config.N_ALL_PLAYERS:
             return Computer.players[player_next_index]
         else:
             return Computer.players[0]
@@ -258,7 +263,7 @@ class TemplatePlayer:
         if player_previous_index >= 0:
             return Computer.players[player_previous_index]
         else:
-            return Computer.players[config.N_PLAYERS - 1]
+            return Computer.players[config.N_ALL_PLAYERS - 1]
 
     def is_next(self):
         from api.poker.computer import Computer

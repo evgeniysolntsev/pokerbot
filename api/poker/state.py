@@ -4,7 +4,6 @@ from api.helpers.singleton import singleton
 
 @singleton
 class State(object):
-    n_players = config.N_PLAYERS
     output_in_console = config.OUTPUT_IN_CONSOLE
     RANKS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
     SUITS = ['s', 'd', 'h', 'c']

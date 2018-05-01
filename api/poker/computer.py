@@ -4,7 +4,7 @@ from api.dnn import config
 from api.helpers.singleton import singleton
 from api.poker.bot import Bot
 from api.poker.card import Card
-from api.poker.deck import Deck
+from api.poker.player import Player
 from api.poker.state import State
 
 
@@ -39,8 +39,8 @@ class Computer(object):
     }
 
     def __init__(self):
-        self.deck = Deck
-        self.player = Bot
+        self.deck = None
+        self.player = None
         self.player_sorted_hand = []
         self.players = []
         self.ranged_hand = []
@@ -52,8 +52,10 @@ class Computer(object):
 
         random.shuffle(self.ranged_hand)
 
-        for n in range(0, State.n_players):
+        for n in range(0, config.N_BOT_PLAYERS):
             self.players.append(Bot())
+        for n in range(0, config.N_PLAYERS):
+            self.players.append(Player())
         self.players = sorted(self.players, reverse=True)
 
     def set_deck(self, deck=None):
