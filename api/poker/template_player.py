@@ -69,7 +69,10 @@ class TemplatePlayer:
             )
 
     def get_max_total_point(self):
-        return max([state.total_point for state in self.action_states.values()])
+        if self.get_folded():
+            return 0
+        else:
+            return max([state.total_point for state in self.action_states.values()])
 
     def set_player_state(self, d=False, sb=False, bb=False):
         self.dealer = d
@@ -180,6 +183,7 @@ class TemplatePlayer:
     def do_bet(self, bet=None):
         from api.poker.computer_action import Computer
         from api.poker.computer_action import ComputerAction
+        bet = float(bet)
         if ComputerAction.get_max_bank() != 0 and bet < (ComputerAction.get_max_bank() * 2):
             if ComputerAction.get_max_bank() * 2 >= self.points:
                 bet = self.points
@@ -216,7 +220,8 @@ class TemplatePlayer:
 
     def do_call(self):
         from api.poker.computer_action import ComputerAction
-        if (self.get_bank() >= ComputerAction.get_max_bank() and self.get_bank() >= Bank.step) or ComputerAction.get_max_bank() < Bank.step:
+        if (
+                self.get_bank() >= ComputerAction.get_max_bank() and self.get_bank() >= Bank.step) or ComputerAction.get_max_bank() < Bank.step:
             print('{} check'.format(self.id))
             return 0
         calling_points = ComputerAction.get_max_bank()

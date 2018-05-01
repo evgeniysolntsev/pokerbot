@@ -121,7 +121,6 @@ class ComputerAction(object):
                     draw_all_in_bank = player.get_all_in_bank() / self.count_winners
                 else:
                     draw_all_in_bank = player.get_all_in_bank()
-                print("bad draw")
                 if Bank.bank >= draw_all_in_bank:
                     if config.OUTPUT_IN_CONSOLE:
                         print(colored('{} get : {} points'.format(player.id, draw_all_in_bank), 'red'))
@@ -290,7 +289,7 @@ class ComputerAction(object):
 
     @staticmethod
     def get_max_point():
-        return max([player.get_max_total_point() for player in Computer.players])
+        return max([player.get_max_total_point() if not player.get_folded() else 0 for player in Computer.players])
 
     @staticmethod
     def get_max_bank():

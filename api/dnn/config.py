@@ -1,9 +1,9 @@
 # COMMON
 NAMES = {
-    "evgen"
+
 }
 BOT_NAMES = {
-    "generous", "greedy", "nihilist", "beginner", "cub", "alliner", "folder", "checker", "alien", "grown", "child"
+    "generous", "greedy", "nihilist", "beginner", "cub", "alliner", "folder", "checker", "alien"
 }
 LOADING_MODEL = True
 OUTPUT_IN_CONSOLE = True

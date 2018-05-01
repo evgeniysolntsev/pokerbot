@@ -18,8 +18,8 @@ class Player(TemplatePlayer):
         if self.is_next():
             return 0
         while True:
-            state = input('{} type action: '.format(self.id))
-            word = re.findall(r'\w*', state)[0]
+            type = input('{} type action: '.format(self.id))
+            word = re.findall(r'\w*', type)[0]
             if word == 'fold':
                 self.do_fold()
             elif word == 'call':
@@ -27,8 +27,8 @@ class Player(TemplatePlayer):
             elif word == 'check' and config.OUTPUT_IN_CONSOLE:
                 print("{} check".format(self.id))
             elif word == 'bet':
-                self.do_bet(bet=float(re.findall(r'\d{1,3}', state)[0]))
+                self.do_bet(bet=re.findall(r'\d{1,3}', type)[0])
             else:
-                print('failed...')
+                print('unknown command {}'.format(type))
                 continue
             break
