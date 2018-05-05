@@ -1,4 +1,5 @@
 import config
+from api.helpers import config_util
 from api.helpers.model import Model
 from api.helpers.utils import get_array_from_player
 from api.poker.bank import Bank
@@ -8,7 +9,11 @@ from api.poker.template_player import TemplatePlayer
 class Bot(TemplatePlayer):
     def __init__(self):
         super().__init__()
-        self.id = config.BOT_NAMES.pop()
+        name = config.BOT_NAMES.pop()
+        if len(name) < config_util.MAX_LENGTH_NAME:
+            while len(name) != config_util.MAX_LENGTH_NAME:
+                name = name + " "
+        self.id = name
         self.predict_result = 0
         self.result_percent = 0
         self.subtracted_result_percent = 0

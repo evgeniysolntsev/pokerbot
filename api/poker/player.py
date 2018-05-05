@@ -1,18 +1,13 @@
 import re
 
 import config
-from api.helpers import config_util
 from api.poker.template_player import TemplatePlayer
 
 
 class Player(TemplatePlayer):
     def __init__(self):
         super().__init__()
-        name = config.NAMES.pop()
-        if len(name) < config_util.MAX_LENGTH_NAME:
-            while len(name) != config_util.MAX_LENGTH_NAME:
-                name = name + " "
-        self.id = name
+        self.id = config.NAMES.pop()
 
     def do_action(self):
         self.did_action = True
