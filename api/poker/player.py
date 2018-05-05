@@ -1,6 +1,7 @@
 import re
 
 from api.dnn import config
+from api.helpers import config_util
 from api.poker.template_player import TemplatePlayer
 
 
@@ -8,8 +9,8 @@ class Player(TemplatePlayer):
     def __init__(self):
         super().__init__()
         name = config.NAMES.pop()
-        if len(name) < config.MAX_LENGTH_NAME:
-            while len(name) != config.MAX_LENGTH_NAME:
+        if len(name) < config_util.MAX_LENGTH_NAME:
+            while len(name) != config_util.MAX_LENGTH_NAME:
                 name = name + " "
         self.id = name
 

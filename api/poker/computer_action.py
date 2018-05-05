@@ -3,6 +3,7 @@ import random
 from termcolor import colored
 
 from api.dnn import config
+from api.helpers import config_util
 from api.helpers.singleton import singleton
 from api.poker.bank import Bank
 from api.poker.computer import Computer
@@ -18,7 +19,8 @@ class ComputerAction(object):
     total_points = None
 
     def play_stage(self):
-        print("-------{}--------".format(State.get()))
+        if config.OUTPUT_IN_CONSOLE:
+            print("-------{}--------".format(State.get()))
         if State.pre_flop:
             self.new_game()
         elif State.flop:
@@ -32,7 +34,7 @@ class ComputerAction(object):
         else:
             self.new_game()
         self.compute_points()
-        if not State.pre_flop:
+        if not State.pre_flop and config.OUTPUT_IN_CONSOLE:
             self.print_table()
 
     def start_game(self):
@@ -218,7 +220,7 @@ class ComputerAction(object):
                 Bank.set_bet(bet=0)
                 d = player.get_next()
                 d.set_d()
-                if config.N_ALL_PLAYERS > 2:
+                if config_util.N_ALL_PLAYERS > 2:
                     sb = d.get_next()
                     sb.set_sb()
                     bb = sb.get_next()
@@ -233,12 +235,14 @@ class ComputerAction(object):
         for player in Computer.players:
             if player.points == 0:
                 player.get_previous().set_d()
-                print(colored('{} leaving game'.format(player.id), 'red'))
+                if config.OUTPUT_IN_CONSOLE:
+                    print(colored('{} leaving game'.format(player.id), 'red'))
                 Computer.players.remove(player)
-                config.N_ALL_PLAYERS = config.N_ALL_PLAYERS - 1
-                if config.N_ALL_PLAYERS == 1:
+                config_util.N_ALL_PLAYERS = config_util.N_ALL_PLAYERS - 1
+                if config_util.N_ALL_PLAYERS == 1:
                     winner = Computer.players[0]
-                    print(colored('winner {} with {} points'.format(winner.id, winner.points), 'red'))
+                    if config.OUTPUT_IN_CONSOLE:
+                        print(colored('winner {} with {} points'.format(winner.id, winner.points), 'red'))
                     return False
                 continue
             player.folded = False
@@ -280,7 +284,7 @@ class ComputerAction(object):
 
     @staticmethod
     def is_all_did_action():
-        return [player.did_action for player in Computer.players].count(True) != config.N_ALL_PLAYERS
+        return [player.did_action for player in Computer.players].count(True) != config_util.N_ALL_PLAYERS
 
     @staticmethod
     def default_deck():
@@ -306,7 +310,7 @@ class ComputerAction(object):
 
     @staticmethod
     def random_dealer():
-        Computer.players[random.randint(0, config.N_ALL_PLAYERS - 1)].set_d()
+        Computer.players[random.randint(0, config_util.N_ALL_PLAYERS - 1)].set_d()
 
     @staticmethod
     def pull_table():
