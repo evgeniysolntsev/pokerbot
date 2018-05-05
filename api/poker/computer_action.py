@@ -2,7 +2,7 @@ import random
 
 from termcolor import colored
 
-from api.dnn import config
+import config
 from api.helpers import config_util
 from api.helpers.singleton import singleton
 from api.poker.bank import Bank

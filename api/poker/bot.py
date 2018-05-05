@@ -1,6 +1,6 @@
-from api.dnn import config
-from api.dnn.model import Model
+import config
 from api.helpers import config_util
+from api.helpers.model import Model
 from api.helpers.utils import get_array_from_player
 from api.poker.bank import Bank
 from api.poker.template_player import TemplatePlayer
@@ -28,7 +28,7 @@ class Bot(TemplatePlayer):
             return 0
         self.predict_result = Model.dnn.predict([get_array_from_player(self)])[0][0]
         self.result_percent = int(self.predict_result * 100)
-        self.subtracted_result_percent = self.result_percent - self.subtraction_percent
+        self.subtracted_result_percent = int(self.result_percent - self.subtraction_percent)
         self.one_percent_score = self.points / 100
         if self.predict_result > self.bet_limit:
             bet = self.one_percent_score * self.subtracted_result_percent

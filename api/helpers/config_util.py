@@ -1,4 +1,4 @@
-from api.dnn import config
+import config
 
 N_PLAYERS = len(config.NAMES)
 N_BOT_PLAYERS = len(config.BOT_NAMES)

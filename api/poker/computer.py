@@ -1,6 +1,6 @@
 import random
 
-from api.dnn import config
+import config
 from api.helpers import config_util
 from api.helpers.singleton import singleton
 from api.poker.bot import Bot

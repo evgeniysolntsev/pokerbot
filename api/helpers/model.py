@@ -1,7 +1,7 @@
 import tensorflow
 import tflearn
 
-from api.dnn import config
+import config
 from api.helpers.singleton import singleton
 
 

@@ -1,6 +1,6 @@
 import re
 
-from api.dnn import config
+import config
 from api.helpers import config_util
 from api.poker.template_player import TemplatePlayer
 

@@ -1,4 +1,4 @@
-from api.dnn import config
+import config
 from api.helpers import config_util
 from api.poker.bank import Bank
 from api.poker.state import State
@@ -208,7 +208,7 @@ class TemplatePlayer:
                 self.points = self.points - bet
                 self.set_bank(bet)
             if config.OUTPUT_IN_CONSOLE:
-                print('{} call: {}'.format(self.id, bet))
+                print('{} call bet: {}'.format(self.id, bet))
             return 0
         elif bet > ComputerAction.get_max_bank():
             self.points = self.points - bet
@@ -223,8 +223,8 @@ class TemplatePlayer:
 
     def do_call(self):
         from api.poker.computer_action import ComputerAction
-        if (
-                self.get_bank() >= ComputerAction.get_max_bank() and self.get_bank() >= Bank.step) or ComputerAction.get_max_bank() < Bank.step:
+        if (self.get_bank() >= ComputerAction.get_max_bank() and self.get_bank() >= Bank.step
+        ) or ComputerAction.get_max_bank() < Bank.step:
             if config.OUTPUT_IN_CONSOLE:
                 print('{} check'.format(self.id))
             return 0

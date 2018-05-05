@@ -1,4 +1,4 @@
-from api.dnn import config
+import config
 from api.modes.gaming_mode import GamingMode
 from api.modes.learning_mode import LearningMode
 
