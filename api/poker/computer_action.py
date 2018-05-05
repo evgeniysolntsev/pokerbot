@@ -3,7 +3,7 @@ import random
 from termcolor import colored
 
 import config
-from api.helpers import config_util
+from api.helpers import utils
 from api.helpers.singleton import singleton
 from api.poker.bank import Bank
 from api.poker.computer import Computer
@@ -220,7 +220,7 @@ class ComputerAction(object):
                 Bank.set_bet(bet=0)
                 d = player.get_next()
                 d.set_d()
-                if config_util.N_ALL_PLAYERS > 2:
+                if utils.N_ALL_PLAYERS > 2:
                     sb = d.get_next()
                     sb.set_sb()
                     bb = sb.get_next()
@@ -238,8 +238,8 @@ class ComputerAction(object):
                 if config.OUTPUT_IN_CONSOLE:
                     print(colored('{} leaving game'.format(player.id), 'red'))
                 Computer.players.remove(player)
-                config_util.N_ALL_PLAYERS = config_util.N_ALL_PLAYERS - 1
-                if config_util.N_ALL_PLAYERS == 1:
+                utils.N_ALL_PLAYERS = utils.N_ALL_PLAYERS - 1
+                if utils.N_ALL_PLAYERS == 1:
                     winner = Computer.players[0]
                     if config.OUTPUT_IN_CONSOLE:
                         print(colored('winner {} with {} points'.format(winner.id, winner.points), 'red'))
@@ -284,7 +284,7 @@ class ComputerAction(object):
 
     @staticmethod
     def is_all_did_action():
-        return [player.did_action for player in Computer.players].count(True) != config_util.N_ALL_PLAYERS
+        return [player.did_action for player in Computer.players].count(True) != utils.N_ALL_PLAYERS
 
     @staticmethod
     def default_deck():
@@ -310,7 +310,7 @@ class ComputerAction(object):
 
     @staticmethod
     def random_dealer():
-        Computer.players[random.randint(0, config_util.N_ALL_PLAYERS - 1)].set_d()
+        Computer.players[random.randint(0, utils.N_ALL_PLAYERS - 1)].set_d()
 
     @staticmethod
     def pull_table():

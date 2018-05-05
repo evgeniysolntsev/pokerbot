@@ -1,5 +1,5 @@
 import config
-from api.helpers import config_util
+from api.helpers import utils
 from api.helpers.model import Model
 from api.helpers.utils import get_array_from_player
 from api.poker.bank import Bank
@@ -10,8 +10,8 @@ class Bot(TemplatePlayer):
     def __init__(self):
         super().__init__()
         name = config.BOT_NAMES.pop()
-        if len(name) < config_util.MAX_LENGTH_NAME:
-            while len(name) != config_util.MAX_LENGTH_NAME:
+        if len(name) < utils.MAX_LENGTH_NAME:
+            while len(name) != utils.MAX_LENGTH_NAME:
                 name = name + " "
         self.id = name
         self.predict_result = 0

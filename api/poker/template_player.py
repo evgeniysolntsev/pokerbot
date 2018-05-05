@@ -1,5 +1,5 @@
 import config
-from api.helpers import config_util
+from api.helpers import utils
 from api.poker.bank import Bank
 from api.poker.state import State
 from api.poker.state_action import ActionState
@@ -263,7 +263,7 @@ class TemplatePlayer:
         from api.poker.computer import Computer
         player_index = Computer.players.index(self)
         player_next_index = player_index + 1
-        if player_next_index < config_util.N_ALL_PLAYERS:
+        if player_next_index < utils.N_ALL_PLAYERS:
             return Computer.players[player_next_index]
         else:
             return Computer.players[0]
@@ -275,7 +275,7 @@ class TemplatePlayer:
         if player_previous_index >= 0:
             return Computer.players[player_previous_index]
         else:
-            return Computer.players[config_util.N_ALL_PLAYERS - 1]
+            return Computer.players[utils.N_ALL_PLAYERS - 1]
 
     def is_next(self):
         from api.poker.computer import Computer
