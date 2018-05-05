@@ -1,7 +1,7 @@
 import config
+from api.helpers import utils
 from api.helpers.model import Model
 from api.helpers.singleton import singleton
-from api.helpers.utils import get_array_from_player
 from api.poker.computer import Computer
 from api.poker.computer_action import ComputerAction
 from api.poker.state import State
@@ -14,8 +14,6 @@ class LearningMode:
         self.Y = []
         self.temp_map = {}
         self.main_index = -1
-        if config.PREDICTING_MODE:
-            self.predict()
         if config.LEARNING_MODE:
             self.learning()
 
@@ -25,7 +23,11 @@ class LearningMode:
                 self.temp_map.__setitem__(player.id, [])
         for player in Computer.players:
             t_a = self.temp_map.__getitem__(player.id)
-            t_a.append(get_array_from_player(player))
+            if config.LEARNING_BOT_MODE:
+                a_p = utils.get_array_from_bot(player)
+            elif config.LEARNING_MODE:
+                a_p = utils.get_array_from_player(player)
+            t_a.append(a_p)
             self.temp_map.__setitem__(player.id, t_a)
         if len(Computer.players[0].table) > 4:
             draw = ComputerAction.is_draw()
@@ -57,16 +59,6 @@ class LearningMode:
             self.Y.clear()
             # for tensorboard graph
             # tensorflow.summary.FileWriter('logs', tensorflow.Session().graph)
-
-    def predict(self):
-        results = Model.dnn.predict([get_array_from_player(Computer.players[0])])
-        i = 0
-        for r in results:
-            print("######################################################\n"
-                  "##                  PREDICT={:5f}                ##\n"
-                  "######################################################".format(r[0]))
-            i += 1
-        exit(0)
 
     def learning(self):
         while True:
