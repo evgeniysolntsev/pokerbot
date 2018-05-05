@@ -3,9 +3,10 @@ import random
 import config
 from api.helpers import utils
 from api.helpers.singleton import singleton
-from api.poker.bot import Bot
 from api.poker.card import Card
+from api.poker.custom_bot import CustomBot
 from api.poker.player import Player
+from api.poker.random_bot import RandomBot
 from api.poker.state import State
 
 
@@ -54,7 +55,13 @@ class Computer(object):
         random.shuffle(self.ranged_hand)
 
         for n in range(0, utils.N_BOT_PLAYERS):
-            self.players.append(Bot())
+            if config.CUSTOM_BOT:
+                bot = CustomBot()
+            elif config.RANDOM_BOT:
+                bot = RandomBot()
+            else:
+                bot = Bot()
+            self.players.append(bot)
         for n in range(0, utils.N_PLAYERS):
             self.players.append(Player())
         self.players = sorted(self.players, reverse=True)

@@ -4,7 +4,6 @@ from api.helpers.model import Model
 from api.helpers.singleton import singleton
 from api.poker.computer import Computer
 from api.poker.computer_action import ComputerAction
-from api.poker.state import State
 
 
 @singleton
@@ -29,7 +28,7 @@ class LearningMode:
                 a_p = utils.get_array_from_player(player)
             t_a.append(a_p)
             self.temp_map.__setitem__(player.id, t_a)
-        if len(Computer.players[0].table) > 4:
+        if len(Computer.players[0].table) > 4 or ComputerAction.is_new_game():
             draw = ComputerAction.is_draw()
             winner = ComputerAction.get_winner()
 
@@ -61,13 +60,20 @@ class LearningMode:
             # tensorflow.summary.FileWriter('logs', tensorflow.Session().graph)
 
     def learning(self):
-        while True:
-            if len(self.X) == 0 and self.main_index > 0:
-                Model.dnn.save('saved_dnn/example')
-                self.predict()
-                exit(0)
-            State.set(pre_flop=True)
-            for n in range(0, 4):
-                ComputerAction.play_stage()
-                self.update_data()
+        ComputerAction.random_dealer()
+        while len(self.X) == 0 and self.main_index > 0:
+            first = ComputerAction.do_default_state()
+            for stage in range(4):
+                ComputerAction.next_stage()
+                player = first
+                while ComputerAction.is_continue() and ComputerAction.is_all_did_action():
+                    if not player.did_action:
+                        player.do_action()
+                    player = player.get_next()
+                ComputerAction.end_stage()
+                if ComputerAction.is_new_game():
+                    break
+            self.update_data()
+            # ComputerAction.set_points_winner()
             self.main_index += 1
+        Model.dnn.save('saved_dnn/example_new')

@@ -9,7 +9,7 @@ from api.helpers.singleton import singleton
 class Model:
     def __init__(self):
         tensorflow.reset_default_graph()
-        if config.LEARNING_MODE:
+        if config.LEARNING_MODE or config.PLAYING_MODE:
             net = tflearn.input_data([None, 68])
             net = tflearn.fully_connected(net, 1800, activation="RElu")
             net = tflearn.fully_connected(net, 100, activation="RElu")

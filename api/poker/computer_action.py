@@ -8,6 +8,7 @@ from api.helpers.singleton import singleton
 from api.poker.bank import Bank
 from api.poker.computer import Computer
 from api.poker.deck import Deck
+from api.poker.random_bot import RandomBot
 from api.poker.state import State
 
 
@@ -18,7 +19,23 @@ class ComputerAction(object):
     count_winners_final = None
     total_points = None
 
-    def play_stage(self):
+    def playing(self):
+        self.random_dealer()
+        while self.is_end_game():
+            first = self.do_default_state()
+            for stage in range(4):
+                self.next_stage()
+                player = first
+                while self.is_continue() and self.is_all_did_action():
+                    if not player.did_action:
+                        player.do_action()
+                    player = player.get_next()
+                self.end_stage()
+                if self.is_new_game():
+                    break
+            self.set_points_winner()
+
+    def next_stage(self):
         if config.OUTPUT_IN_CONSOLE:
             print("-------{}--------".format(State.get()))
         if State.pre_flop:
@@ -37,10 +54,6 @@ class ComputerAction(object):
         if not State.pre_flop and config.OUTPUT_IN_CONSOLE:
             self.print_table()
 
-    def start_game(self):
-        while True:
-            self.play_stage()
-
     def new_game(self):
         self.default_deck()
         self.shuffle_ranged_hand()
@@ -50,6 +63,8 @@ class ComputerAction(object):
         for player in Computer.players:
             player.hand.clear()
             player.table.clear()
+            if config.RANDOM_BOT and isinstance(player, RandomBot.__class__):
+                player.refresh_limits()
             for h in range(0, 2):
                 card = temp_ranged_hand.pop(0)
                 player.hand.append(card)
@@ -234,11 +249,16 @@ class ComputerAction(object):
     def is_end_game():
         for player in Computer.players:
             if player.points == 0:
-                player.get_previous().set_d()
-                if config.OUTPUT_IN_CONSOLE:
-                    print(colored('{} leaving game'.format(player.id), 'red'))
-                Computer.players.remove(player)
-                utils.N_ALL_PLAYERS = utils.N_ALL_PLAYERS - 1
+                if config.ETERNAL_MODE:
+                    player.points = 50
+                    if config.OUTPUT_IN_CONSOLE:
+                        print(colored('{} refresh points'.format(player.id), 'red'))
+                else:
+                    player.get_previous().set_d()
+                    if config.OUTPUT_IN_CONSOLE:
+                        print(colored('{} leaving game'.format(player.id), 'red'))
+                    Computer.players.remove(player)
+                    utils.N_ALL_PLAYERS = utils.N_ALL_PLAYERS - 1
                 if utils.N_ALL_PLAYERS == 1:
                     winner = Computer.players[0]
                     if config.OUTPUT_IN_CONSOLE:
