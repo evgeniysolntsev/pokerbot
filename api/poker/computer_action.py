@@ -260,17 +260,16 @@ class ComputerAction(object):
                     if config.OUTPUT_IN_CONSOLE:
                         print(colored('{} leaving game'.format(player.id), 'red'))
                     removed_players.append(player)
-                    utils.N_ALL_PLAYERS = utils.N_ALL_PLAYERS - 1
-                if utils.N_ALL_PLAYERS == 1:
-                    winner = Computer.players[0]
-                    if config.OUTPUT_IN_CONSOLE:
-                        print(colored('winner {} with {} points'.format(winner.id, winner.points), 'red'))
-                    return False
                 continue
             player.reset_action_states()
         for player in removed_players:
             Computer.players.remove(player)
-
+            utils.N_ALL_PLAYERS = utils.N_ALL_PLAYERS - 1
+            if utils.N_ALL_PLAYERS == 1:
+                winner = Computer.players[0]
+                if config.OUTPUT_IN_CONSOLE:
+                    print(colored('winner {} with {} points'.format(winner.id, winner.points), 'red'))
+                return False
         return True
 
     @staticmethod
