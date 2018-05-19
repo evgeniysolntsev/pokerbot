@@ -2,7 +2,7 @@
 NAMES = {}
 # names of bot players
 BOT_NAMES = {
-    "generous", "greedy", "nihilist", "beginner", "cub", "alliner", "folder", "checker", "alien"
+    "generous", "greedy"
 }
 # loading model from saved dnn
 LOADING_MODEL = True
@@ -12,18 +12,19 @@ OUTPUT_IN_CONSOLE = True
 RANDOM_BOT = True
 CUSTOM_BOT = False
 # when points end, then 50 points added to player
-ETERNAL_MODE = False
+ETERNAL_MODE = True
+ETERNAL_MODE_ADDING_POINTS = False
 # range of player cards
-RANGE_HAND = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+RANGE_HAND = [10, 11, 12, 13, 14]
 # learning mode
-LEARNING_MODE = False
-LEARNING_BOT_MODE = False
+LEARNING_MODE = True
+LEARNING_BOT_MODE = True
 N_EPOCH = 10
 VALIDATION_SET = 0.1
 FIT_QUANTITY = 10000
 SHOW_METRIC = True
 # playing mode
-PLAYING_MODE = True
+PLAYING_MODE = False
 START_POINTS = 50
 # predicting mode
 PREDICTING_MODE = False

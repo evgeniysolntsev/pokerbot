@@ -2,7 +2,7 @@ import config
 from api.poker.state import State
 
 
-def get_array_from_player(player=None):
+def get_array_from_simple_mode(player=None):
     temp = [0] * 68
 
     if len(player.hand) > 1:
@@ -27,7 +27,7 @@ def get_array_from_player(player=None):
     return temp
 
 
-def get_array_from_bot(bot=None):
+def get_array_from_mode(bot=None):
     temp = [0] * 268
 
     if len(bot.hand) > 1:
@@ -49,7 +49,7 @@ def get_array_from_bot(bot=None):
         temp[State.RANKS.index(bot.table[4].rank) + 51] = 1
         temp[State.SUITS.index(bot.table[4].suit) + 64] = 1
     temp[68 + bot.bet_limit] = 1
-    temp[168 + bot.call_limit] = 1
+    temp[167 + bot.call_limit] = 1
 
     return temp
 
@@ -78,3 +78,5 @@ config.BOT_NAMES = TEMP_BOT_NAMES
 ALL_NAMES = []
 ALL_NAMES.extend(config.NAMES)
 ALL_NAMES.extend(config.BOT_NAMES)
+TEMP_NAMES = config.NAMES.copy()
+TEMP_BOT_NAMES = config.BOT_NAMES.copy()

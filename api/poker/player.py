@@ -1,13 +1,13 @@
 import re
 
-import config
+from api.helpers import utils
 from api.poker.template_player import TemplatePlayer
 
 
 class Player(TemplatePlayer):
     def __init__(self):
         super().__init__()
-        self.id = config.NAMES.pop()
+        self.id = utils.TEMP_NAMES.pop()
 
     def do_action(self):
         self.did_action = True

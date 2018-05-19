@@ -1,6 +1,5 @@
-import config
+from api.helpers import utils
 from api.helpers.model import Model
-from api.helpers.utils import get_array_from_player
 from api.poker.bank import Bank
 from api.poker.template_player import TemplatePlayer
 
@@ -8,7 +7,7 @@ from api.poker.template_player import TemplatePlayer
 class CustomBot(TemplatePlayer):
     def __init__(self):
         super().__init__()
-        self.id = config.BOT_NAMES.pop()
+        self.id = utils.TEMP_BOT_NAMES.pop()
         self.predict_result = 0
         self.result_percent = 0
         self.subtracted_result_percent = 0
@@ -20,7 +19,7 @@ class CustomBot(TemplatePlayer):
         self.did_action = True
         if self.is_next():
             return 0
-        self.predict_result = Model.dnn.predict([get_array_from_player(self)])[0][0]
+        self.predict_result = Model.dnn.predict([utils.get_array_from_simple_mode(self)])[0][0]
         self.result_percent = int(self.predict_result * 100)
         self.subtracted_result_percent = int(self.result_percent - self.call_limit)
         self.one_percent_score = self.points / 100

@@ -1,6 +1,5 @@
-import config
+from api.helpers import utils
 from api.helpers.model import Model
-from api.helpers.utils import get_array_from_bot
 from api.poker.bank import Bank
 from api.poker.template_player import TemplatePlayer
 
@@ -8,7 +7,7 @@ from api.poker.template_player import TemplatePlayer
 class Bot(TemplatePlayer):
     def __init__(self):
         super().__init__()
-        self.id = config.BOT_NAMES.pop()
+        self.id = utils.TEMP_BOT_NAMES.pop()
         self.predict_result = 0
         self.result_percent = 0
         self.subtracted_result_percent = 0
@@ -25,7 +24,7 @@ class Bot(TemplatePlayer):
             for c_index in range(0, 100):
                 self.bet_limit = b_index
                 self.call_limit = c_index
-                self.predict_result = Model.dnn.predict([get_array_from_bot(self)])[0][0]
+                self.predict_result = Model.dnn.predict([utils.get_array_from_mode(self)])[0][0]
                 predict_array.append(self)
         max_predict = 0
         for p_a in predict_array:

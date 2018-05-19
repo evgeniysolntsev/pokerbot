@@ -4,5 +4,7 @@ from api.poker.computer_action import ComputerAction
 
 @singleton
 class GamingMode(object):
-    def __init__(self):
+
+    @staticmethod
+    def action():
         ComputerAction.playing()

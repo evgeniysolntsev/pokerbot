@@ -8,7 +8,6 @@ from api.helpers.singleton import singleton
 from api.poker.bank import Bank
 from api.poker.computer import Computer
 from api.poker.deck import Deck
-from api.poker.random_bot import RandomBot
 from api.poker.state import State
 
 
@@ -251,7 +250,7 @@ class ComputerAction(object):
         removed_players = []
         for player in Computer.players:
             if player.points == 0:
-                if config.ETERNAL_MODE:
+                if config.ETERNAL_MODE_ADDING_POINTS:
                     player.points = 50
                     if config.OUTPUT_IN_CONSOLE:
                         print(colored('{} refresh points'.format(player.id), 'red'))
@@ -266,10 +265,18 @@ class ComputerAction(object):
             Computer.players.remove(player)
             utils.N_ALL_PLAYERS = utils.N_ALL_PLAYERS - 1
             if utils.N_ALL_PLAYERS == 1:
-                winner = Computer.players[0]
-                if config.OUTPUT_IN_CONSOLE:
-                    print(colored('winner {} with {} points'.format(winner.id, winner.points), 'red'))
-                return False
+                if config.ETERNAL_MODE:
+                    utils.N_ALL_PLAYERS = utils.N_PLAYERS + utils.N_BOT_PLAYERS
+                    utils.TEMP_NAMES = config.NAMES.copy()
+                    utils.TEMP_BOT_NAMES = config.BOT_NAMES.copy()
+                    Computer.players = []
+                    Computer.init_players()
+                    ComputerAction.random_dealer()
+                else:
+                    winner = Computer.players[0]
+                    if config.OUTPUT_IN_CONSOLE:
+                        print(colored('winner {} with {} points'.format(winner.id, winner.points), 'red'))
+                    return False
         return True
 
     @staticmethod

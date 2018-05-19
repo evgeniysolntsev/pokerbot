@@ -5,8 +5,8 @@ from api.modes.predicting_mode import PredictingMode
 
 if __name__ == '__main__':
     if config.PLAYING_MODE:
-        GamingMode()
+        GamingMode.action()
     elif config.LEARNING_MODE:
-        LearningMode()
+        LearningMode.action()
     elif config.PREDICTING_MODE:
-        PredictingMode()
+        PredictingMode.action()

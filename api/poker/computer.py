@@ -54,7 +54,9 @@ class Computer(object):
                 self.ranged_hand.append(card)
 
         random.shuffle(self.ranged_hand)
+        self.init_players()
 
+    def init_players(self):
         for n in range(0, utils.N_BOT_PLAYERS):
             if config.CUSTOM_BOT:
                 bot = CustomBot()

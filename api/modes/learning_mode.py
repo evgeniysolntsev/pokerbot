@@ -12,7 +12,8 @@ class LearningMode:
         self.X = []
         self.Y = []
         self.temp_map = {}
-        self.main_index = -1
+
+    def action(self):
         if config.LEARNING_MODE:
             self.learning()
 
@@ -23,9 +24,9 @@ class LearningMode:
         for player in Computer.players:
             t_a = self.temp_map.__getitem__(player.id)
             if config.LEARNING_BOT_MODE:
-                a_p = utils.get_array_from_bot(player)
+                a_p = utils.get_array_from_mode(player)
             elif config.LEARNING_MODE:
-                a_p = utils.get_array_from_player(player)
+                a_p = utils.get_array_from_simple_mode(player)
             t_a.append(a_p)
             self.temp_map.__setitem__(player.id, t_a)
         if len(Computer.players[0].table) > 4 or ComputerAction.is_new_game():
@@ -43,10 +44,10 @@ class LearningMode:
 
             for player in Computer.players:
                 self.X.extend(self.temp_map.__getitem__(player.id))
-
             self.temp_map.clear()
 
         if len(self.X) > config.FIT_QUANTITY:
+            Model.init_learning_bot_mode()
             Model.dnn.fit(
                 X_inputs=self.X,
                 Y_targets=self.Y,
@@ -54,14 +55,18 @@ class LearningMode:
                 validation_set=config.VALIDATION_SET,
                 show_metric=config.SHOW_METRIC
             )
-            self.X.clear()
-            self.Y.clear()
-            # for tensorboard graph
+            Model.dnn.save('saved_dnn/example_new')
+            return False
+        else:
+            return True
+
             # tensorflow.summary.FileWriter('logs', tensorflow.Session().graph)
 
     def learning(self):
         ComputerAction.random_dealer()
-        while len(self.X) == 0 and self.main_index > 0:
+        while self.update_data():
+            ComputerAction.set_points_winner()
+            ComputerAction.is_end_game()
             first = ComputerAction.do_default_state()
             for stage in range(4):
                 ComputerAction.next_stage()
@@ -73,7 +78,3 @@ class LearningMode:
                 ComputerAction.end_stage()
                 if ComputerAction.is_new_game():
                     break
-            self.update_data()
-            # ComputerAction.set_points_winner()
-            self.main_index += 1
-        Model.dnn.save('saved_dnn/example_new')
