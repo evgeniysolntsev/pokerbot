@@ -48,8 +48,8 @@ def get_array_from_bot(bot=None):
     if len(bot.table) > 4:
         temp[State.RANKS.index(bot.table[4].rank) + 51] = 1
         temp[State.SUITS.index(bot.table[4].suit) + 64] = 1
-    temp[68 + (bot.bet_limit * 100)] = 1
-    temp[168 + (bot.call_limit * 100)] = 1
+    temp[68 + bot.bet_limit] = 1
+    temp[168 + bot.call_limit] = 1
 
     return temp
 

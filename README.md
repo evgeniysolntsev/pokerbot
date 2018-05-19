@@ -6,3 +6,7 @@ tensorflow(https://www.tensorflow.org/install/)
 ```bash
 pip install --upgrade tflearn
 pip install --upgrade colored
+```
+Help
+---- 
+config.py for managing app

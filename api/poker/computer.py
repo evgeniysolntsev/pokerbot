@@ -3,6 +3,7 @@ import random
 import config
 from api.helpers import utils
 from api.helpers.singleton import singleton
+from api.poker.bot import Bot
 from api.poker.card import Card
 from api.poker.custom_bot import CustomBot
 from api.poker.player import Player

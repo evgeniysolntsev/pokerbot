@@ -123,10 +123,10 @@ class ComputerAction(object):
             if self.is_winners_end():
                 return 0
             for p in Computer.players:
-                if p.get_all_in() and not p.folded and p.get_max_total_point() == self.max_total_points:
+                if p.get_all_in() and not p.get_folded() and p.get_max_total_point() == self.max_total_points:
                     self.set_winners(p)
             for p in Computer.players:
-                if not p.folded and p.get_max_total_point() == self.max_total_points:
+                if not p.get_folded() and p.get_max_total_point() == self.max_total_points:
                     self.set_winners(p)
 
     def set_draw(self, player):
@@ -166,10 +166,10 @@ class ComputerAction(object):
         if self.is_winners_end():
             return 0
         for p in Computer.players:
-            if p.get_all_in() and not p.folded and p.get_max_total_point() == self.max_total_points:
+            if p.get_all_in() and not p.get_folded() and p.get_max_total_point() == self.max_total_points:
                 self.set_draw(p)
         for p in Computer.players:
-            if not p.folded and p.get_max_total_point() == self.max_total_points:
+            if not p.get_folded() and p.get_max_total_point() == self.max_total_points:
                 self.set_draw(p)
 
     def is_winners_end(self):
