@@ -317,7 +317,7 @@ class ComputerAction(object):
 
     @staticmethod
     def get_max_bank():
-        return max([p.get_bank() if p.get_bank() else 0 for p in Computer.players])
+        return max([p.get_cur_points_in_bank() if p.get_cur_points_in_bank() else 0 for p in Computer.players])
 
     @staticmethod
     def shuffle_ranged_hand():

@@ -105,8 +105,8 @@ class TemplatePlayer:
         self.set_player_state(bb=True)
         self.pre_game_take_points()
 
-    def set_bank(self, bank):
-        self.get_current_action().bank = self.get_current_action().bank + bank
+    def set_cur_points_in_bank(self, points_in_bank):
+        self.get_current_action().points_in_bank = self.get_current_action().points_in_bank + points_in_bank
 
     def set_all_in(self, all_in=True):
         self.get_current_action().all_in = all_in
@@ -135,14 +135,14 @@ class TemplatePlayer:
                     all_in_bank = all_in_bank + all_in_bank_p
             self.set_all_in_bank(all_in_bank)
 
-    def get_bank(self):
-        return self.get_current_action().bank
+    def get_cur_points_in_bank(self):
+        return self.get_current_action().points_in_bank
 
     def get_total_bank(self):
         total_bank = 0
         for state in self.action_states.values():
-            if state.bank:
-                total_bank = total_bank + state.bank
+            if state.points_in_bank:
+                total_bank = total_bank + state.points_in_bank
         return total_bank
 
     def get_all_in_bank(self):
@@ -165,19 +165,19 @@ class TemplatePlayer:
             sb_points = Bank.step / 2
             if self.points > sb_points:
                 self.points = self.points - sb_points
-                self.get_current_action().bank = Bank.step / 2
+                self.get_current_action().points_in_bank = Bank.step / 2
                 Bank.set_sb()
             else:
-                self.get_current_action().bank = self.points
+                self.get_current_action().points_in_bank = self.points
                 Bank.add_to_bank(points=self.points)
                 self.points = 0
         elif self.big_blind:
             if self.points > Bank.step:
                 self.points = self.points - Bank.step
-                self.get_current_action().bank = Bank.step
+                self.get_current_action().points_in_bank = Bank.step
                 Bank.set_bb()
             else:
-                self.get_current_action().bank = self.points
+                self.get_current_action().points_in_bank = self.points
                 Bank.add_to_bank(points=self.points)
                 self.points = 0
 
@@ -185,65 +185,67 @@ class TemplatePlayer:
         from api.poker.computer_action import Computer
         from api.poker.computer_action import ComputerAction
         bet = float(bet)
-        if ComputerAction.get_max_bank() != 0 and bet < (ComputerAction.get_max_bank() * 2):
-            if ComputerAction.get_max_bank() * 2 >= self.points:
+        max_bet = ComputerAction.get_max_bank()
+        if max_bet != 0 and bet < (max_bet * 2):
+            if max_bet * 2 >= self.points:
                 bet = self.points
             else:
-                bet = ComputerAction.get_max_bank() * 2
+                bet = max_bet * 2
         if bet > self.points:
             bet = self.points
             Bank.add_to_bank(bet)
-            self.set_bank(bet)
+            self.set_cur_points_in_bank(bet)
             self.set_all_in()
             self.points = 0
-        elif bet <= ComputerAction.get_max_bank():
-            if ComputerAction.get_max_bank() >= self.points:
+        elif bet <= max_bet:
+            if max_bet >= self.points:
                 Bank.add_to_bank(self.points)
-                self.set_bank(self.points)
+                self.set_cur_points_in_bank(self.points)
                 self.set_all_in()
                 self.points = 0
             else:
-                bet = ComputerAction.get_max_bank()
+                bet = max_bet
                 Bank.add_to_bank(bet)
                 self.points = self.points - bet
-                self.set_bank(bet)
+                self.set_cur_points_in_bank(bet)
             if config.OUTPUT_IN_CONSOLE:
                 print('{} call bet: {}'.format(self.id, bet))
             return 0
-        elif bet > ComputerAction.get_max_bank():
+        elif bet > max_bet:
             self.points = self.points - bet
             Bank.add_to_bank(bet)
-            self.set_bank(bet)
+            self.set_cur_points_in_bank(bet)
         for player in Computer.players:
             player.did_action = False
         Bank.set_bet(bet=bet)
         self.did_action = True
         if config.OUTPUT_IN_CONSOLE:
-            print('{} bet: {}'.format(self.id, self.get_bank()))
+            print('{} bet: {}'.format(self.id, self.get_cur_points_in_bank()))
 
     def do_call(self):
         from api.poker.computer_action import ComputerAction
-        if (self.get_bank() >= ComputerAction.get_max_bank() and self.get_bank() >= Bank.step
-        ) or ComputerAction.get_max_bank() < Bank.step:
+        max_bank = ComputerAction.get_max_bank()
+        if (self.get_cur_points_in_bank() >= max_bank and self.get_cur_points_in_bank() >= Bank.step
+        ) or max_bank < Bank.step:
             if config.OUTPUT_IN_CONSOLE:
                 print('{} check'.format(self.id))
             return 0
-        calling_points = ComputerAction.get_max_bank()
+        calling_points = max_bank
         if self.points > calling_points:
-            if self.get_bank() != 0:
-                calling_points = calling_points - self.get_bank()
+            if self.get_cur_points_in_bank() != 0:
+                calling_points = calling_points - self.get_cur_points_in_bank()
             else:
-                calling_points = ComputerAction.get_max_bank()
-            self.set_bank(calling_points)
+                calling_points = max_bank
+            self.set_cur_points_in_bank(calling_points)
             Bank.add_to_bank(points=calling_points)
             self.sub_points(calling_points)
         else:
             self.set_all_in()
-            self.set_bank(self.points)
+            self.set_cur_points_in_bank(self.points)
             Bank.add_to_bank(points=self.points)
             self.points = 0
         if config.OUTPUT_IN_CONSOLE:
-            print('{} call: {}'.format(self.id, self.get_bank()))
+            print('{} call: {}'.format(self.id, self.get_cur_points_in_bank()))
 
     def do_fold(self):
         from api.poker.computer_action import ComputerAction
@@ -251,7 +253,7 @@ class TemplatePlayer:
             if config.OUTPUT_IN_CONSOLE:
                 print('{} all_in'.format(self.id))
             return 0
-        elif self.get_bank() == ComputerAction.get_max_bank():
+        elif self.get_cur_points_in_bank() == ComputerAction.get_max_bank():
             if config.OUTPUT_IN_CONSOLE:
                 print('{} check'.format(self.id))
             return 0

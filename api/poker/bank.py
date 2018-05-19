@@ -22,4 +22,5 @@ class Bank:
         self.bank = self.bank + self.step
 
     def set_bet(self, bet=None):
-        self.bet = bet
+        if bet > self.bet:
+            self.bet = bet
