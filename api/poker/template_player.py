@@ -194,29 +194,27 @@ class TemplatePlayer:
         if bet > self.points:
             bet = self.points
             Bank.add_to_bank(bet)
-            self.set_cur_points_in_bank(bet)
             self.set_all_in()
             self.points = 0
         elif bet <= max_bet:
             if max_bet >= self.points:
-                Bank.add_to_bank(self.points)
-                self.set_cur_points_in_bank(self.points)
+                bet = self.points
+                Bank.add_to_bank(bet)
                 self.set_all_in()
                 self.points = 0
             else:
                 bet = max_bet
                 Bank.add_to_bank(bet)
                 self.points = self.points - bet
-                self.set_cur_points_in_bank(bet)
             if config.OUTPUT_IN_CONSOLE:
                 print('{} call bet: {}'.format(self.id, bet))
             return 0
         elif bet > max_bet:
             self.points = self.points - bet
             Bank.add_to_bank(bet)
-            self.set_cur_points_in_bank(bet)
         for player in Computer.players:
             player.did_action = False
+        self.set_cur_points_in_bank(bet)
         Bank.set_bet(bet=bet)
         self.did_action = True
         if config.OUTPUT_IN_CONSOLE:
