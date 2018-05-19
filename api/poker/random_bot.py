@@ -19,8 +19,8 @@ class RandomBot(TemplatePlayer):
         self.call_limit = random.randint(0, self.bet_limit)
 
     def refresh_limits(self):
-        self.bet_limit = random.randint(0, 100) / 100
-        self.call_limit = random.randint(0, self.bet_limit * 100)
+        self.bet_limit = random.randint(0, 100)
+        self.call_limit = random.randint(0, self.bet_limit)
 
     def do_action(self):
         self.did_action = True

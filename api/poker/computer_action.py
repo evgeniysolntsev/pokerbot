@@ -63,7 +63,7 @@ class ComputerAction(object):
         for player in Computer.players:
             player.hand.clear()
             player.table.clear()
-            if config.RANDOM_BOT and isinstance(player, RandomBot.__class__):
+            if config.RANDOM_BOT:
                 player.refresh_limits()
             for h in range(0, 2):
                 card = temp_ranged_hand.pop(0)
