@@ -20,8 +20,8 @@ class Bot(TemplatePlayer):
         if self.is_next():
             return 0
         predict_array = []
-        for b_index in range(0, 100):
-            for c_index in range(0, 100):
+        for c_index in range(0, 100):
+            for b_index in range(0, 100):
                 self.bet_limit = b_index
                 self.call_limit = c_index
                 self.predict_result = Model.dnn.predict([utils.get_array_from_mode(self)])[0][0]
