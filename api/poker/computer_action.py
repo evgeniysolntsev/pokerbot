@@ -91,7 +91,7 @@ class ComputerAction(object):
             self.set_winners(player_winner)
         else:
             if config.OUTPUT_IN_CONSOLE:
-                print(colored('{} get : {} points'.format(player_winner.id, Bank.bank), 'red'))
+                self.convert_get_message(player_winner.id, Bank.bank)
             player_winner.add_points(Bank.bank)
 
     def set_winners(self, player):
@@ -103,19 +103,19 @@ class ComputerAction(object):
             elif player.get_all_in():
                 if Bank.bank >= player.get_all_in_bank():
                     if config.OUTPUT_IN_CONSOLE:
-                        print(colored('{} get : {} points'.format(player.id, player.get_all_in_bank()), 'red'))
+                        self.convert_get_message(player.id, player.get_all_in_bank())
                     player.add_points(player.get_all_in_bank())
                     Bank.set_bank(bank=Bank.bank - player.get_all_in_bank())
                 else:
                     if config.OUTPUT_IN_CONSOLE:
-                        print(colored('{} get : {} points'.format(player.id, Bank.bank), 'red'))
+                        self.convert_get_message(player.id, Bank.bank)
                     player.add_points(Bank.bank)
                     Bank.set_bank(bank=0)
                 player.set_all_in(False)
                 player.set_null_total_points()
             else:
                 if config.OUTPUT_IN_CONSOLE:
-                    print(colored('{} get : {} points'.format(player.id, Bank.bank), 'red'))
+                    self.convert_get_message(player.id, Bank.bank)
                 player.add_points(Bank.bank)
                 Bank.set_bank(bank=0)
                 player.set_null_total_points()
@@ -140,24 +140,24 @@ class ComputerAction(object):
                     draw_all_in_bank = player.get_all_in_bank()
                 if Bank.bank >= draw_all_in_bank:
                     if config.OUTPUT_IN_CONSOLE:
-                        print(colored('{} get : {} points'.format(player.id, draw_all_in_bank), 'red'))
+                        self.convert_get_message(player.id, draw_all_in_bank)
                     player.add_points(draw_all_in_bank)
                     Bank.set_bank(bank=Bank.bank - draw_all_in_bank)
                 else:
                     if config.OUTPUT_IN_CONSOLE:
-                        print(colored('{} get : {} points'.format(player.id, Bank.bank), 'red'))
+                        self.convert_get_message(player.id, Bank.bank)
                     player.add_points(Bank.bank)
                     Bank.set_bank(bank=0)
             else:
                 draw_bank = Bank.bank / self.count_winners
                 if Bank.bank >= draw_bank:
                     if config.OUTPUT_IN_CONSOLE:
-                        print(colored('{} get : {} points'.format(player.id, draw_bank), 'red'))
+                        self.convert_get_message(player.id, draw_bank)
                     Bank.set_bank(bank=Bank.bank - draw_bank)
                     player.add_points(draw_bank)
                 else:
                     if config.OUTPUT_IN_CONSOLE:
-                        print(colored('{} get : {} points'.format(player.id, Bank.bank), 'red'))
+                        self.convert_get_message(player.id, Bank.bank)
                     player.add_points(Bank.bank)
                     Bank.set_bank(bank=0)
             player.set_folded()
@@ -337,3 +337,7 @@ class ComputerAction(object):
         card = Computer.deck.pull()
         for player in Computer.players:
             player.table.append(card)
+
+    @staticmethod
+    def convert_get_message(playerId=None, points=None):
+        print(colored('{} get : {} points'.format(playerId, points), 'red'))
