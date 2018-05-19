@@ -1,7 +1,5 @@
 # names of real players
-NAMES = {
-    "i"
-}
+NAMES = {}
 # names of bot players
 BOT_NAMES = {
     "generous", "greedy", "nihilist", "beginner", "cub", "alliner", "folder", "checker", "alien"
