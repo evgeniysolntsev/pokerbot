@@ -160,6 +160,7 @@ class ComputerAction(object):
                         self.convert_get_message(player.id, Bank.bank)
                     player.add_points(Bank.bank)
                     Bank.set_bank(bank=0)
+            player.set_null_total_points()
             player.set_folded()
 
         if self.is_winners_end():
@@ -247,6 +248,7 @@ class ComputerAction(object):
 
     @staticmethod
     def is_end_game():
+        removed_players = []
         for player in Computer.players:
             if player.points == 0:
                 if config.ETERNAL_MODE:
@@ -257,7 +259,7 @@ class ComputerAction(object):
                     player.get_previous().set_d()
                     if config.OUTPUT_IN_CONSOLE:
                         print(colored('{} leaving game'.format(player.id), 'red'))
-                    Computer.players.remove(player)
+                    removed_players.append(player)
                     utils.N_ALL_PLAYERS = utils.N_ALL_PLAYERS - 1
                 if utils.N_ALL_PLAYERS == 1:
                     winner = Computer.players[0]
@@ -265,9 +267,10 @@ class ComputerAction(object):
                         print(colored('winner {} with {} points'.format(winner.id, winner.points), 'red'))
                     return False
                 continue
-            player.folded = False
-            player.did_action = False
             player.reset_action_states()
+        for player in removed_players:
+            Computer.players.remove(player)
+
         return True
 
     @staticmethod
@@ -316,7 +319,7 @@ class ComputerAction(object):
         return max([player.get_max_total_point() if not player.get_folded() else 0 for player in Computer.players])
 
     @staticmethod
-    def get_max_bank():
+    def get_max_points_in_bank():
         return max([p.get_cur_points_in_bank() if p.get_cur_points_in_bank() else 0 for p in Computer.players])
 
     @staticmethod
