@@ -7,7 +7,7 @@ BOT_NAMES = {
 # loading model from saved dnn
 LOADING_MODEL = True
 # out in console all info
-OUTPUT_IN_CONSOLE = True
+OUTPUT_IN_CONSOLE = False
 # switch if all false, then set default bot
 RANDOM_BOT = True
 CUSTOM_BOT = False
@@ -19,9 +19,9 @@ RANGE_HAND = [10, 11, 12, 13, 14]
 # learning mode
 LEARNING_MODE = True
 LEARNING_BOT_MODE = True
-N_EPOCH = 30
+N_EPOCH = 100
 VALIDATION_SET = 0.1
-FIT_QUANTITY = 24000000
+FIT_QUANTITY = 8300000
 SHOW_METRIC = True
 # playing mode
 PLAYING_MODE = False
