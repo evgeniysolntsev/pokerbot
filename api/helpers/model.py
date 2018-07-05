@@ -9,9 +9,9 @@ from api.helpers.singleton import singleton
 class Model:
     def __init__(self):
         tensorflow.reset_default_graph()
-        if config.LEARNING_MODE or config.PLAYING_MODE:
+        if config.LEARNING_MODE:
             net = self.init_net_mode()
-        elif config.LEARNING_BOT_MODE:
+        elif config.LEARNING_BOT_MODE or config.PLAYING_MODE:
             net = self.init_net_bot_mode()
         dnn = tflearn.DNN(net)
         self.dnn = dnn
