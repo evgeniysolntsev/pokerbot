@@ -9,6 +9,7 @@ from api.poker.bank import Bank
 from api.poker.computer import Computer
 from api.poker.deck import Deck
 from api.poker.state import State
+from api.poker.template_bot import TemplateBot
 
 
 @singleton
@@ -215,7 +216,11 @@ class ComputerAction(object):
             full_hand.extend(player.table)
             if State.output_in_console:
                 cs = ''
+                i = 0
                 for c in player.hand:
+                    if i < 2 and isinstance(player, TemplateBot):
+                        c = '?'
+                    i = i + 1
                     cs = cs + str(c) + '  '
                 print(colored('{} : {} \t\t\t\t points : {:.1f}'.format(str(player.id), cs[:-1], player.points),
                               'yellow'))

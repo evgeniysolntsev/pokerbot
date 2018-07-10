@@ -1,5 +1,6 @@
 import re
 
+import config
 from api.helpers import utils
 from api.poker.template_player import TemplatePlayer
 

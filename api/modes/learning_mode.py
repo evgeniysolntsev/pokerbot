@@ -14,8 +14,8 @@ class LearningMode:
         self.temp_map = {}
 
     def action(self):
-        if config.LEARNING_MODE:
-            self.learning()
+        if config.SIMPLE_NN:
+            self.do_learning()
 
     def update_data(self):
         if len(self.temp_map) == 0:
@@ -23,9 +23,9 @@ class LearningMode:
                 self.temp_map.__setitem__(player.id, [])
         for player in Computer.players:
             t_a = self.temp_map.__getitem__(player.id)
-            if config.LEARNING_BOT_MODE:
+            if config.EXTENDED_NN:
                 a_p = utils.get_array_from_mode(player)
-            elif config.LEARNING_MODE:
+            elif config.SIMPLE_NN:
                 a_p = utils.get_array_from_simple_mode(player)
             t_a.append(a_p)
             self.temp_map.__setitem__(player.id, t_a)
@@ -59,10 +59,9 @@ class LearningMode:
             return False
         else:
             return True
-
             # tensorflow.summary.FileWriter('logs', tensorflow.Session().graph)
 
-    def learning(self):
+    def do_learning(self):
         ComputerAction.random_dealer()
         while self.update_data():
             ComputerAction.set_points_winner()

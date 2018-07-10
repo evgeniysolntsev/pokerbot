@@ -208,7 +208,7 @@ class TemplatePlayer:
                 self.points = self.points - bet
             self.set_cur_points_in_bank(bet)
             if config.OUTPUT_IN_CONSOLE:
-                print('{} call bet: {}'.format(self.id, bet))
+                print('{} call: {}'.format(self.id, bet))
             return 0
         elif bet > max_bet:
             self.points = self.points - bet
@@ -290,3 +290,8 @@ class TemplatePlayer:
             if player.get_all_in():
                 j = j + 1
         return self.get_folded() or self.get_all_in() or i - j == 1
+
+    def is_skip(self):
+        self.did_action = True
+        if self.is_next():
+            return True

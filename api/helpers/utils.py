@@ -27,7 +27,7 @@ def get_array_from_simple_mode(player=None):
     return temp
 
 
-def get_array_from_mode(bot=None):
+def get_array_from_mode(bot=None, call_limit=0, bet_limit=0):
     temp = [0] * 268
 
     if len(bot.hand) > 1:
@@ -48,12 +48,15 @@ def get_array_from_mode(bot=None):
     if len(bot.table) > 4:
         temp[State.RANKS.index(bot.table[4].rank) + 51] = 1
         temp[State.SUITS.index(bot.table[4].suit) + 64] = 1
-    temp[68 + bot.call_limit] = 1
-    temp[167 + bot.bet_limit] = 1
+    temp[68 + call_limit] = 1
+    temp[167 + bet_limit] = 1
 
     return temp
 
 
+if config.PLAYING_MODE or config.PREDICTING_MODE:
+    config.EXTENDED_NN = True
+    config.SIMPLE_NN = False
 N_PLAYERS = len(config.NAMES)
 N_BOT_PLAYERS = len(config.BOT_NAMES)
 N_ALL_PLAYERS = N_PLAYERS + N_BOT_PLAYERS
