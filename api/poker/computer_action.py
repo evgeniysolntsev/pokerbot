@@ -219,11 +219,9 @@ class ComputerAction(object):
                 i = 0
                 for c in player.hand:
                     if i < 2 and isinstance(player, TemplateBot) and not config.TEST_INFO:
-                        c = '?'
+                        c = '? '
                     i = i + 1
                     cs = cs + str(c) + '  '
-                if isinstance(player, TemplateBot) and not config.TEST_INFO:
-                    cs = cs + '\t'
                 print(colored('{} : {} \t\t\t\t points : {:.1f}'.format(str(player.id), cs[:-1], player.points),
                               'yellow'))
             Computer.player_sorted_hand = sorted(full_hand, reverse=True)
@@ -282,7 +280,7 @@ class ComputerAction(object):
                 else:
                     winner = Computer.players[0]
                     if config.OUTPUT_IN_CONSOLE:
-                        print(colored('winner {} with {} points'.format(winner.id, winner.points), 'red'))
+                        print(colored('winner {} with {:.1f} points'.format(winner.id, winner.points), 'red'))
                     return False
         return True
 
@@ -341,8 +339,9 @@ class ComputerAction(object):
 
     @staticmethod
     def print_scores():
-        for player in Computer.players:
-            print(colored(player.get_current_action().combination_str, 'blue'))
+        if State.river:
+            for player in Computer.players:
+                print(colored(player.get_current_action().combination_str, 'blue'))
 
     @staticmethod
     def random_dealer():
@@ -356,4 +355,4 @@ class ComputerAction(object):
 
     @staticmethod
     def convert_get_message(playerId=None, points=None):
-        print(colored('{} get : {} points'.format(playerId, points), 'red'))
+        print(colored('{} get : {:.1f} points'.format(playerId, points), 'red'))

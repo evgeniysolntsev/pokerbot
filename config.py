@@ -1,10 +1,9 @@
-# names of real players
+# names of real players, for add player need only write his name
 NAMES = {
-    "real"
 }
 # names of bot players
 BOT_NAMES = {
-    "bot"
+    "bot", "botVasiliy"
 }
 # loading model from saved dnn
 LOADING_MODEL = True
