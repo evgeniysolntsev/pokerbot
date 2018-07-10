@@ -1,8 +1,10 @@
 # names of real players
-NAMES = {"ich"}
+NAMES = {
+    "real"
+}
 # names of bot players
 BOT_NAMES = {
-    "generous"
+    "bot"
 }
 # loading model from saved dnn
 LOADING_MODEL = True

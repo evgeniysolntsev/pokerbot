@@ -218,10 +218,12 @@ class ComputerAction(object):
                 cs = ''
                 i = 0
                 for c in player.hand:
-                    if i < 2 and isinstance(player, TemplateBot):
+                    if i < 2 and isinstance(player, TemplateBot) and not config.TEST_INFO:
                         c = '?'
                     i = i + 1
                     cs = cs + str(c) + '  '
+                if isinstance(player, TemplateBot) and not config.TEST_INFO:
+                    cs = cs + '\t'
                 print(colored('{} : {} \t\t\t\t points : {:.1f}'.format(str(player.id), cs[:-1], player.points),
                               'yellow'))
             Computer.player_sorted_hand = sorted(full_hand, reverse=True)
