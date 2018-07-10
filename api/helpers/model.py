@@ -26,8 +26,8 @@ class Model:
     @staticmethod
     def init_net_bot_mode():
         net = tflearn.input_data([None, 268])
-        net = tflearn.fully_connected(net, 3000, activation="RElu")
-        net = tflearn.fully_connected(net, 500, activation="RElu")
+        net = tflearn.fully_connected(net, 7000, activation="RElu")
+        net = tflearn.fully_connected(net, 100, activation="RElu")
         net = tflearn.fully_connected(net, 2, activation="softmax")
         net = tflearn.regression(net, optimizer='Momentum', loss='mean_square', learning_rate=0.01)
         return net
