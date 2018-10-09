@@ -27,6 +27,8 @@ class LearningMode:
                 a_p = utils.get_array_from_mode(player)
             elif config.SIMPLE_NN:
                 a_p = utils.get_array_from_simple_mode(player)
+            else:
+                exit("EXTENDED_NN SIMPLE_NN XOR")
             t_a.append(a_p)
             self.temp_map.__setitem__(player.id, t_a)
         if len(Computer.players[0].table) > 4 or ComputerAction.is_new_game():

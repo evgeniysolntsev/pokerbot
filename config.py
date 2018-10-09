@@ -32,5 +32,5 @@ START_POINTS = 50
 # predicting mode
 PREDICTING_MODE = False
 # path to saved nn
-PATH_SIMPLE_NN = "C:\\Users\evgeniy\PycharmProjects\\pokerbot\saved_dnn\example"
-PATH_EXTENDED_NN = "C:\\Users\evgeniy\PycharmProjects\\pokerbot\saved_dnn\example_new"
+PATH_SIMPLE_NN = "YourPath\example"
+PATH_EXTENDED_NN = "YourPath\example_new"
