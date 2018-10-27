@@ -2,8 +2,8 @@ import config
 from api.helpers import utils
 from api.helpers.model import Model
 from api.helpers.singleton import singleton
-from api.poker.computer import Computer
-from api.poker.computer_action import ComputerAction
+from api.poker.core import Core
+from api.poker.core_action import CoreAction
 
 
 @singleton
@@ -24,18 +24,18 @@ class LearningModeInputsCards:
 
     def update_data(self):
         if len(self.temp_map) == 0:
-            for player in Computer.players:
+            for player in Core.players:
                 self.set_item(player.id, [])
-        for player in Computer.players:
+        for player in Core.players:
             temp_array = self.get_item(player.id)
             temp_array.append(utils.get_array_inputs_cards(player))
             self.set_item(player.id, temp_array)
 
-        if len(Computer.players[0].table) > 4 or ComputerAction.is_new_game():
-            draw = ComputerAction.is_draw()
-            winner = ComputerAction.get_winner()
+        if len(Core.players[0].table) > 4 or CoreAction.is_new_game():
+            draw = CoreAction.is_draw()
+            winner = CoreAction.get_winner()
 
-            for player in Computer.players:
+            for player in Core.players:
                 result = [0, 1]
                 if player.id == winner.id:
                     result = [1, 0]
@@ -44,7 +44,7 @@ class LearningModeInputsCards:
                 for s in range(4):
                     self.Y.append(result)
 
-            for player in Computer.players:
+            for player in Core.players:
                 self.X.extend(self.get_item(player.id))
             self.temp_map.clear()
 
@@ -64,18 +64,18 @@ class LearningModeInputsCards:
             # tensorflow.summary.FileWriter('logs', tensorflow.Session().graph)
 
     def do_learning(self):
-        ComputerAction.random_dealer()
+        CoreAction.random_dealer()
         while self.update_data():
-            ComputerAction.set_points_winner()
-            ComputerAction.is_end_game()
-            first = ComputerAction.do_default_state()
+            CoreAction.set_points_winner()
+            CoreAction.is_end_game()
+            first = CoreAction.do_default_state()
             for stage in range(4):
-                ComputerAction.next_stage()
+                CoreAction.next_stage()
                 player = first
-                while ComputerAction.is_continue() and ComputerAction.is_all_did_action():
+                while CoreAction.is_continue() and CoreAction.is_all_did_action():
                     if not player.did_action:
                         player.do_action()
                     player = player.get_next()
-                ComputerAction.end_stage()
-                if ComputerAction.is_new_game():
+                CoreAction.end_stage()
+                if CoreAction.is_new_game():
                     break

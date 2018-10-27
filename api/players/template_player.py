@@ -126,8 +126,8 @@ class TemplatePlayer:
     def set_winning_points_all_in(self):
         if self.get_all_in() and not self.get_all_in_bank():
             all_in_bank = 0
-            from api.poker.computer import Computer
-            for p in Computer.players:
+            from api.poker.core import Core
+            for p in Core.players:
                 if p.get_total_bank() >= self.get_total_bank():
                     all_in_bank_p = self.get_total_bank()
                 else:
@@ -182,10 +182,10 @@ class TemplatePlayer:
                 self.points = 0
 
     def do_bet(self, bet=None):
-        from api.poker.computer_action import Computer
-        from api.poker.computer_action import ComputerAction
+        from api.poker.core_action import Core
+        from api.poker.core_action import CoreAction
         bet = float(bet)
-        max_bet = ComputerAction.get_max_points_in_bank()
+        max_bet = CoreAction.get_max_points_in_bank()
         if max_bet != 0 and bet < (max_bet * 2):
             if max_bet * 2 >= self.points:
                 bet = self.points
@@ -213,7 +213,7 @@ class TemplatePlayer:
         elif bet > max_bet:
             self.points = self.points - bet
             Bank.add_to_bank(bet)
-        for player in Computer.players:
+        for player in Core.players:
             player.did_action = False
         self.set_cur_points_in_bank(bet)
         Bank.set_bet(bet=bet)
@@ -222,8 +222,8 @@ class TemplatePlayer:
             print('{} bet: {}'.format(self.id, self.get_cur_points_in_bank()))
 
     def do_call(self):
-        from api.poker.computer_action import ComputerAction
-        max_bet = ComputerAction.get_max_points_in_bank()
+        from api.poker.core_action import CoreAction
+        max_bet = CoreAction.get_max_points_in_bank()
         cur_points = self.get_cur_points_in_bank()
         if (cur_points >= max_bet and cur_points >= Bank.step) or max_bet < Bank.step:
             if config.OUTPUT_IN_CONSOLE:
@@ -247,12 +247,12 @@ class TemplatePlayer:
             print('{} call: {}'.format(self.id, max_bet))
 
     def do_fold(self):
-        from api.poker.computer_action import ComputerAction
+        from api.poker.core_action import CoreAction
         if self.get_all_in():
             if config.OUTPUT_IN_CONSOLE:
                 print('{} all_in'.format(self.id))
             return 0
-        elif self.get_cur_points_in_bank() == ComputerAction.get_max_points_in_bank():
+        elif self.get_cur_points_in_bank() == CoreAction.get_max_points_in_bank():
             if config.OUTPUT_IN_CONSOLE:
                 print('{} check'.format(self.id))
             return 0
@@ -263,28 +263,28 @@ class TemplatePlayer:
             print('{} fold'.format(self.id))
 
     def get_next(self):
-        from api.poker.computer import Computer
-        player_index = Computer.players.index(self)
+        from api.poker.core import Core
+        player_index = Core.players.index(self)
         player_next_index = player_index + 1
         if player_next_index < utils.COUNT_ALL_PLAYERS:
-            return Computer.players[player_next_index]
+            return Core.players[player_next_index]
         else:
-            return Computer.players[0]
+            return Core.players[0]
 
     def get_previous(self):
-        from api.poker.computer import Computer
-        player_index = Computer.players.index(self)
+        from api.poker.core import Core
+        player_index = Core.players.index(self)
         player_previous_index = player_index - 1
         if player_previous_index >= 0:
-            return Computer.players[player_previous_index]
+            return Core.players[player_previous_index]
         else:
-            return Computer.players[utils.COUNT_ALL_PLAYERS - 1]
+            return Core.players[utils.COUNT_ALL_PLAYERS - 1]
 
     def is_next(self):
-        from api.poker.computer import Computer
+        from api.poker.core import Core
         i = 0
         j = 0
-        for player in Computer.players:
+        for player in Core.players:
             if not player.get_folded():
                 i = i + 1
             if player.get_all_in():

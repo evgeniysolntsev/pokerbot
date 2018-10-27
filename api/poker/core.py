@@ -12,7 +12,7 @@ from api.poker.state import State
 
 
 @singleton
-class Computer(object):
+class Core(object):
     xY5x10 = 3712930
     xY5x9 = 3341637
     xY5x8 = 2970344

@@ -7,13 +7,13 @@ from api.helpers import utils
 from api.helpers.singleton import singleton
 from api.players.template_bot import TemplateBot
 from api.poker.bank import Bank
-from api.poker.computer import Computer
+from api.poker.core import Core
 from api.poker.deck import Deck
 from api.poker.state import State
 
 
 @singleton
-class ComputerAction(object):
+class CoreAction(object):
     max_total_points = None
     count_winners = None
     count_winners_final = None
@@ -59,8 +59,8 @@ class ComputerAction(object):
         self.shuffle_ranged_hand()
 
         temp_ranged_hand = []
-        temp_ranged_hand.extend(Computer.ranged_hand)
-        for player in Computer.players:
+        temp_ranged_hand.extend(Core.ranged_hand)
+        for player in Core.players:
             player.hand.clear()
             player.table.clear()
             if utils.BOT_RANDOM_ACTIONS:
@@ -68,10 +68,10 @@ class ComputerAction(object):
             for h in range(0, 2):
                 card = temp_ranged_hand.pop(0)
                 player.hand.append(card)
-                Computer.deck.deck.remove(card)
+                Core.deck.deck.remove(card)
 
     def compute_count_winners(self):
-        self.total_points = [p.get_max_total_point() if not p.get_folded() else 0 for p in Computer.players]
+        self.total_points = [p.get_max_total_point() if not p.get_folded() else 0 for p in Core.players]
         self.max_total_points = max(self.total_points)
         self.count_winners = self.total_points.count(self.max_total_points)
 
@@ -79,7 +79,7 @@ class ComputerAction(object):
         has_draw = self.is_draw()
         has_all_in = False
         player_winner = None
-        for p in Computer.players:
+        for p in Core.players:
             if p.get_max_total_point() == self.max_total_points:
                 player_winner = p
                 if p.get_all_in():
@@ -122,10 +122,10 @@ class ComputerAction(object):
 
             if self.is_winners_end():
                 return 0
-            for p in Computer.players:
+            for p in Core.players:
                 if p.get_all_in() and not p.get_folded() and p.get_max_total_point() == self.max_total_points:
                     self.set_winners(p)
-            for p in Computer.players:
+            for p in Core.players:
                 if not p.get_folded() and p.get_max_total_point() == self.max_total_points:
                     self.set_winners(p)
 
@@ -165,10 +165,10 @@ class ComputerAction(object):
 
         if self.is_winners_end():
             return 0
-        for p in Computer.players:
+        for p in Core.players:
             if p.get_all_in() and not p.get_folded() and p.get_max_total_point() == self.max_total_points:
                 self.set_draw(p)
-        for p in Computer.players:
+        for p in Core.players:
             if not p.get_folded() and p.get_max_total_point() == self.max_total_points:
                 self.set_draw(p)
 
@@ -184,11 +184,11 @@ class ComputerAction(object):
             return False
 
     def get_index_winner(self):
-        return [player.get_max_total_point() for player in Computer.players].index(self.get_max_point())
+        return [player.get_max_total_point() for player in Core.players].index(self.get_max_point())
 
     def get_winner(self):
         max_point = self.get_max_point()
-        for player in Computer.players:
+        for player in Core.players:
             if not player.get_folded():
                 if player.get_max_total_point() == max_point:
                     return player
@@ -204,13 +204,13 @@ class ComputerAction(object):
     @staticmethod
     def print_table():
         cs = ''
-        for c in Computer.players[0].table:
+        for c in Core.players[0].table:
             cs = cs + str(c) + '  '
         print(colored('Table: ' + cs, 'blue'))
 
     @staticmethod
     def compute_points():
-        for player in Computer.players:
+        for player in Core.players:
             full_hand = []
             full_hand.extend(player.hand)
             full_hand.extend(player.table)
@@ -224,17 +224,17 @@ class ComputerAction(object):
                     cs = cs + str(c) + '  '
                 print(colored('{} : {} \t\t\t\t points : {:.1f}'.format(str(player.id), cs[:-1], player.points),
                               'yellow'))
-            Computer.player_sorted_hand = sorted(full_hand, reverse=True)
-            Computer.set_player(player=player)
+            Core.player_sorted_hand = sorted(full_hand, reverse=True)
+            Core.set_player(player=player)
             if not State.pre_flop:
-                Computer.is_royal()
+                Core.is_royal()
             else:
-                Computer.is_one()
+                Core.is_one()
 
     @staticmethod
     def do_default_state():
         State.set(pre_flop=True)
-        for player in Computer.players:
+        for player in Core.players:
             if player.dealer:
                 Bank.set_bank(bank=0)
                 Bank.set_bet(bet=0)
@@ -253,7 +253,7 @@ class ComputerAction(object):
     @staticmethod
     def is_end_game():
         removed_players = []
-        for player in Computer.players:
+        for player in Core.players:
             if player.points == 0:
                 if config.ETERNAL_MODE_AFTER_LOSING_PLAYER_ADDING_POINTS:
                     player.points = 50
@@ -267,18 +267,18 @@ class ComputerAction(object):
                 continue
             player.reset_action_states()
         for player in removed_players:
-            Computer.players.remove(player)
+            Core.players.remove(player)
             utils.COUNT_ALL_PLAYERS = utils.COUNT_ALL_PLAYERS - 1
             if utils.COUNT_ALL_PLAYERS == 1:
                 if config.ETERNAL_MODE:
                     utils.COUNT_ALL_PLAYERS = utils.COUNT_PLAYERS + utils.COUNT_BOT_PLAYERS
                     utils.TEMP_NAMES = config.HUMAN_NAMES.copy()
                     utils.TEMP_BOT_NAMES = config.BOT_NAMES.copy()
-                    Computer.players = []
-                    Computer.init_players()
-                    ComputerAction.random_dealer()
+                    Core.players = []
+                    Core.init_players()
+                    CoreAction.random_dealer()
                 else:
-                    winner = Computer.players[0]
+                    winner = Core.players[0]
                     if config.OUTPUT_IN_CONSOLE:
                         print(colored('winner {} with {:.1f} points'.format(winner.id, winner.points), 'red'))
                     return False
@@ -286,18 +286,18 @@ class ComputerAction(object):
 
     @staticmethod
     def end_stage():
-        for player in Computer.players:
+        for player in Core.players:
             player.did_action = False
             player.set_winning_points_all_in()
 
     @staticmethod
     def is_continue():
         i = 0
-        for player in Computer.players:
+        for player in Core.players:
             if not player.get_folded():
                 i = i + 1
         if i == 1:
-            for player in Computer.players:
+            for player in Core.players:
                 player.did_action = True
             return False
         else:
@@ -306,7 +306,7 @@ class ComputerAction(object):
     @staticmethod
     def is_new_game():
         i = 0
-        for player in Computer.players:
+        for player in Core.players:
             if not player.get_folded():
                 i = i + 1
         if i == 1:
@@ -318,39 +318,39 @@ class ComputerAction(object):
 
     @staticmethod
     def is_all_did_action():
-        return [player.did_action for player in Computer.players].count(True) != utils.COUNT_ALL_PLAYERS
+        return [player.did_action for player in Core.players].count(True) != utils.COUNT_ALL_PLAYERS
 
     @staticmethod
     def default_deck():
-        Computer.deck = Deck()
-        Computer.deck.shuffle()
+        Core.deck = Deck()
+        Core.deck.shuffle()
 
     @staticmethod
     def get_max_point():
-        return max([player.get_max_total_point() if not player.get_folded() else 0 for player in Computer.players])
+        return max([player.get_max_total_point() if not player.get_folded() else 0 for player in Core.players])
 
     @staticmethod
     def get_max_points_in_bank():
-        return max([p.get_cur_points_in_bank() if p.get_cur_points_in_bank() else 0 for p in Computer.players])
+        return max([p.get_cur_points_in_bank() if p.get_cur_points_in_bank() else 0 for p in Core.players])
 
     @staticmethod
     def shuffle_ranged_hand():
-        random.shuffle(Computer.ranged_hand)
+        random.shuffle(Core.ranged_hand)
 
     @staticmethod
     def print_scores():
         if State.river:
-            for player in Computer.players:
+            for player in Core.players:
                 print(colored(player.get_current_action().combination_str, 'blue'))
 
     @staticmethod
     def random_dealer():
-        Computer.players[random.randint(0, utils.COUNT_ALL_PLAYERS - 1)].set_d()
+        Core.players[random.randint(0, utils.COUNT_ALL_PLAYERS - 1)].set_d()
 
     @staticmethod
     def pull_table():
-        card = Computer.deck.pull()
-        for player in Computer.players:
+        card = Core.deck.pull()
+        for player in Core.players:
             player.table.append(card)
 
     @staticmethod
