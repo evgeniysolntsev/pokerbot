@@ -1,10 +1,10 @@
 import config
 from api.helpers import utils
 from api.helpers.model import Model
-from api.poker.template_bot import TemplateBot
+from api.players.template_bot import TemplateBot
 
 
-class Bot(TemplateBot):
+class BotWithNNActions(TemplateBot):
     def __init__(self):
         super().__init__()
 
@@ -19,7 +19,7 @@ class Bot(TemplateBot):
             for i in range(50, 100):
                 for j in range(i, 100):
                     predicting_result = Model.dnn.predict(
-                        [utils.get_array_from_mode(bot=self, call_limit=i, bet_limit=j)])[0][0]
+                        [utils.get_array_inputs_cards_and_bot_actions(bot=self, call_limit=i, bet_limit=j)])[0][0]
                     if predicting_result > self.predict_result:
                         self.bet_limit = j
                         self.call_limit = i

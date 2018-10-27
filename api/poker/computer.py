@@ -3,11 +3,11 @@ import random
 import config
 from api.helpers import utils
 from api.helpers.singleton import singleton
-from api.poker.bot import Bot
+from api.players.bot_with_custom_actions import BotWithCustomActions
+from api.players.bot_with_nn_actions import BotWithNNActions
+from api.players.bot_with_random_actions import BotWithRandomActions
+from api.players.player import Player
 from api.poker.card import Card
-from api.poker.custom_bot import CustomBot
-from api.poker.player import Player
-from api.poker.random_bot import RandomBot
 from api.poker.state import State
 
 
@@ -49,7 +49,7 @@ class Computer(object):
         self.ranged_hand = []
         State.set(pre_flop=True)
         for suit in State.SUITS:
-            for rank in config.RANGE_HAND:
+            for rank in config.RANGE_CARDS_ON_HAND:
                 card = Card(rank, suit)
                 self.ranged_hand.append(card)
 
@@ -57,15 +57,15 @@ class Computer(object):
         self.init_players()
 
     def init_players(self):
-        for n in range(0, utils.N_BOT_PLAYERS):
-            if config.CUSTOM_BOT:
-                bot = CustomBot()
-            elif config.RANDOM_BOT:
-                bot = RandomBot()
-            else:
-                bot = Bot()
+        for n in range(0, utils.COUNT_BOT_PLAYERS):
+            if utils.BOT_CUSTOM_ACTIONS:
+                bot = BotWithCustomActions()
+            elif utils.BOT_RANDOM_ACTIONS:
+                bot = BotWithRandomActions()
+            elif utils.BOT_NN_ACTIONS:
+                bot = BotWithNNActions()
             self.players.append(bot)
-        for n in range(0, utils.N_PLAYERS):
+        for n in range(0, utils.COUNT_PLAYERS):
             self.players.append(Player())
         self.players = sorted(self.players, reverse=True)
 

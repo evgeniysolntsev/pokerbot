@@ -5,11 +5,11 @@ from termcolor import colored
 import config
 from api.helpers import utils
 from api.helpers.singleton import singleton
+from api.players.template_bot import TemplateBot
 from api.poker.bank import Bank
 from api.poker.computer import Computer
 from api.poker.deck import Deck
 from api.poker.state import State
-from api.poker.template_bot import TemplateBot
 
 
 @singleton
@@ -63,7 +63,7 @@ class ComputerAction(object):
         for player in Computer.players:
             player.hand.clear()
             player.table.clear()
-            if config.RANDOM_BOT:
+            if utils.BOT_RANDOM_ACTIONS:
                 player.refresh_limits()
             for h in range(0, 2):
                 card = temp_ranged_hand.pop(0)
@@ -240,7 +240,7 @@ class ComputerAction(object):
                 Bank.set_bet(bet=0)
                 d = player.get_next()
                 d.set_d()
-                if utils.N_ALL_PLAYERS > 2:
+                if utils.COUNT_ALL_PLAYERS > 2:
                     sb = d.get_next()
                     sb.set_sb()
                     bb = sb.get_next()
@@ -255,7 +255,7 @@ class ComputerAction(object):
         removed_players = []
         for player in Computer.players:
             if player.points == 0:
-                if config.ETERNAL_MODE_ADDING_POINTS:
+                if config.ETERNAL_MODE_AFTER_LOSING_PLAYER_ADDING_POINTS:
                     player.points = 50
                     if config.OUTPUT_IN_CONSOLE:
                         print(colored('{} refresh points'.format(player.id), 'red'))
@@ -268,11 +268,11 @@ class ComputerAction(object):
             player.reset_action_states()
         for player in removed_players:
             Computer.players.remove(player)
-            utils.N_ALL_PLAYERS = utils.N_ALL_PLAYERS - 1
-            if utils.N_ALL_PLAYERS == 1:
+            utils.COUNT_ALL_PLAYERS = utils.COUNT_ALL_PLAYERS - 1
+            if utils.COUNT_ALL_PLAYERS == 1:
                 if config.ETERNAL_MODE:
-                    utils.N_ALL_PLAYERS = utils.N_PLAYERS + utils.N_BOT_PLAYERS
-                    utils.TEMP_NAMES = config.NAMES.copy()
+                    utils.COUNT_ALL_PLAYERS = utils.COUNT_PLAYERS + utils.COUNT_BOT_PLAYERS
+                    utils.TEMP_NAMES = config.HUMAN_NAMES.copy()
                     utils.TEMP_BOT_NAMES = config.BOT_NAMES.copy()
                     Computer.players = []
                     Computer.init_players()
@@ -318,7 +318,7 @@ class ComputerAction(object):
 
     @staticmethod
     def is_all_did_action():
-        return [player.did_action for player in Computer.players].count(True) != utils.N_ALL_PLAYERS
+        return [player.did_action for player in Computer.players].count(True) != utils.COUNT_ALL_PLAYERS
 
     @staticmethod
     def default_deck():
@@ -345,7 +345,7 @@ class ComputerAction(object):
 
     @staticmethod
     def random_dealer():
-        Computer.players[random.randint(0, utils.N_ALL_PLAYERS - 1)].set_d()
+        Computer.players[random.randint(0, utils.COUNT_ALL_PLAYERS - 1)].set_d()
 
     @staticmethod
     def pull_table():

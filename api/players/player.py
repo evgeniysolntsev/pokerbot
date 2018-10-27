@@ -2,7 +2,7 @@ import re
 
 import config
 from api.helpers import utils
-from api.poker.template_player import TemplatePlayer
+from api.players.template_player import TemplatePlayer
 
 
 class Player(TemplatePlayer):

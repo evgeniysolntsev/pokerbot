@@ -7,30 +7,31 @@ from api.poker.computer_action import ComputerAction
 
 
 @singleton
-class LearningMode:
+class LearningModeInputsCardsAndBotActions:
     def __init__(self):
         self.X = []
         self.Y = []
         self.temp_map = {}
 
+    def set_item(self, key, value):
+        self.temp_map.__setitem__(key, value)
+
+    def get_item(self, key):
+        return self.temp_map.__getitem__(key)
+
     def action(self):
-        if config.SIMPLE_NN:
-            self.do_learning()
+        Model.init_tf_model_with_input_cards(load=True)
+        self.do_learning()
 
     def update_data(self):
         if len(self.temp_map) == 0:
             for player in Computer.players:
-                self.temp_map.__setitem__(player.id, [])
+                self.set_item(player.id, [])
         for player in Computer.players:
-            t_a = self.temp_map.__getitem__(player.id)
-            if config.EXTENDED_NN:
-                a_p = utils.get_array_from_mode(player)
-            elif config.SIMPLE_NN:
-                a_p = utils.get_array_from_simple_mode(player)
-            else:
-                exit("EXTENDED_NN SIMPLE_NN XOR")
-            t_a.append(a_p)
-            self.temp_map.__setitem__(player.id, t_a)
+            temp_array = self.get_item(player.id)
+            temp_array.append(utils.get_array_inputs_cards(player))
+            self.set_item(player.id, temp_array)
+
         if len(Computer.players[0].table) > 4 or ComputerAction.is_new_game():
             draw = ComputerAction.is_draw()
             winner = ComputerAction.get_winner()
@@ -45,11 +46,11 @@ class LearningMode:
                     self.Y.append(result)
 
             for player in Computer.players:
-                self.X.extend(self.temp_map.__getitem__(player.id))
+                self.X.extend(self.get_item(player.id))
             self.temp_map.clear()
 
         if len(self.X) > config.FIT_QUANTITY:
-            Model.init_learning_bot_mode()
+            Model.init_tf_model_with_input_cards_and_bot_actions()
             Model.dnn.fit(
                 X_inputs=self.X,
                 Y_targets=self.Y,
@@ -57,7 +58,7 @@ class LearningMode:
                 validation_set=config.VALIDATION_SET,
                 show_metric=config.SHOW_METRIC
             )
-            Model.dnn.save('saved_dnn/example_new')
+            Model.dnn.save(config.PATH_NN_INPUTS_CARDS_AND_BOT_ACTIONS)
             return False
         else:
             return True

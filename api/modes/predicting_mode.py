@@ -1,9 +1,10 @@
 from api.helpers.model import Model
-from api.helpers.utils import get_array_from_simple_mode
+from api.helpers.utils import get_array_inputs_cards
 from api.poker import computer
 from api.poker.computer import Computer
 
 
+# todo
 class PredictingMode(object):
     def __init__(self):
         test = []
@@ -19,6 +20,6 @@ class PredictingMode(object):
 
     @staticmethod
     def action():
-        results = Model.dnn.predict([get_array_from_simple_mode(Computer.players[0])])
+        results = Model.dnn.predict([get_array_inputs_cards(Computer.players[0])])
         for r in results:
             print("PREDICT={:5f}\n".format(r[0]))

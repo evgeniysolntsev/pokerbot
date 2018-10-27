@@ -2,7 +2,7 @@ import config
 from api.poker.state import State
 
 
-def get_array_from_simple_mode(player=None):
+def get_array_inputs_cards(player=None):
     temp = [0] * 68
 
     if len(player.hand) > 1:
@@ -27,7 +27,7 @@ def get_array_from_simple_mode(player=None):
     return temp
 
 
-def get_array_from_mode(bot=None, call_limit=0, bet_limit=0):
+def get_array_inputs_cards_and_bot_actions(bot=None, call_limit=0, bet_limit=0):
     temp = [0] * 268
 
     if len(bot.hand) > 1:
@@ -55,31 +55,41 @@ def get_array_from_mode(bot=None, call_limit=0, bet_limit=0):
 
 
 if config.PLAYING_MODE or config.PREDICTING_MODE:
-    config.EXTENDED_NN = True
-    config.SIMPLE_NN = False
-N_PLAYERS = len(config.NAMES)
-N_BOT_PLAYERS = len(config.BOT_NAMES)
-N_ALL_PLAYERS = N_PLAYERS + N_BOT_PLAYERS
+    config.NN_INPUTS_CARDS_AND_BOT_ACTIONS = True
+    config.NN_INPUTS_CARDS = False
+COUNT_PLAYERS = len(config.HUMAN_NAMES)
+COUNT_BOT_PLAYERS = len(config.BOT_NAMES)
+COUNT_ALL_PLAYERS = COUNT_PLAYERS + COUNT_BOT_PLAYERS
+
 ALL_NAMES = []
-ALL_NAMES.extend(config.NAMES)
+ALL_NAMES.extend(config.HUMAN_NAMES)
 ALL_NAMES.extend(config.BOT_NAMES)
+
 MAX_LENGTH_NAME = max([len(name) for name in ALL_NAMES])
+
 TEMP_NAMES = []
 TEMP_BOT_NAMES = []
-for name in config.NAMES:
+for name in config.HUMAN_NAMES:
     if len(name) < MAX_LENGTH_NAME:
         while len(name) != MAX_LENGTH_NAME:
             name = name + " "
     TEMP_NAMES.append(name)
-config.NAMES = TEMP_NAMES
+config.HUMAN_NAMES = TEMP_NAMES
+
 for name in config.BOT_NAMES:
     if len(name) < MAX_LENGTH_NAME:
         while len(name) != MAX_LENGTH_NAME:
             name = name + " "
     TEMP_BOT_NAMES.append(name)
 config.BOT_NAMES = TEMP_BOT_NAMES
+
 ALL_NAMES = []
-ALL_NAMES.extend(config.NAMES)
+ALL_NAMES.extend(config.HUMAN_NAMES)
 ALL_NAMES.extend(config.BOT_NAMES)
-TEMP_NAMES = config.NAMES.copy()
+
+TEMP_NAMES = config.HUMAN_NAMES.copy()
 TEMP_BOT_NAMES = config.BOT_NAMES.copy()
+
+BOT_RANDOM_ACTIONS = config.LEARNING_MODE
+BOT_CUSTOM_ACTIONS = config.PLAYING_MODE and config.NN_INPUTS_CARDS
+BOT_NN_ACTIONS = config.PLAYING_MODE and config.NN_INPUTS_CARDS_AND_BOT_ACTIONS
