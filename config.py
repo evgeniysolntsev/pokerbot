@@ -1,7 +1,7 @@
 # ======================================================================================================================
 #               1st. When is defined winner, then game will start from the beginning, so to eternal
 #               2nd. After player losing game, he gets again start points
-ETERNAL_MODE = True
+ETERNAL_MODE = False
 ETERNAL_MODE_AFTER_LOSING_PLAYER_ADDING_POINTS = False
 # ======================================================================================================================
 #               If enable need define type nn with count inputs, its boolean variables below
@@ -27,7 +27,7 @@ BOT_NAMES = {
 # ======================================================================================================================
 #               Additional info in console
 OUTPUT_IN_CONSOLE = True
-TEST_INFO = True
+TEST_INFO = False
 # ======================================================================================================================
 #               10-14 equally T-A cards
 RANGE_CARDS_ON_HAND = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
