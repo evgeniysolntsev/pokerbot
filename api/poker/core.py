@@ -3,9 +3,10 @@ import random
 import config
 from api.helpers import utils
 from api.helpers.singleton import singleton
-from api.players.bot_with_custom_actions import BotWithCustomActions
-from api.players.bot_with_nn_actions import BotWithNNActions
-from api.players.bot_with_random_actions import BotWithRandomActions
+from api.players.bot_always_skip import BotAlwaysSkip
+from api.players.bot_custom_actions import BotCustomActions
+from api.players.bot_nn_actions import BotNNActions
+from api.players.bot_random_actions import BotRandomActions
 from api.players.player import Player
 from api.poker.card import Card
 from api.poker.state import State
@@ -59,11 +60,13 @@ class Core(object):
     def init_players(self):
         for n in range(0, utils.COUNT_BOT_PLAYERS):
             if utils.BOT_CUSTOM_ACTIONS:
-                bot = BotWithCustomActions()
+                bot = BotCustomActions()
             elif utils.BOT_RANDOM_ACTIONS:
-                bot = BotWithRandomActions()
+                bot = BotRandomActions()
             elif utils.BOT_NN_ACTIONS:
-                bot = BotWithNNActions()
+                bot = BotNNActions()
+            elif utils.BOT_ALWAYS_SKIP:
+                bot = BotAlwaysSkip()
             self.players.append(bot)
         for n in range(0, utils.COUNT_PLAYERS):
             self.players.append(Player())

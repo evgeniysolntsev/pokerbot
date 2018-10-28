@@ -1,19 +1,13 @@
-import random
-
 from api.helpers import utils
 from api.helpers.model import Model
 from api.players.template_bot import TemplateBot
 
 
-class BotWithRandomActions(TemplateBot):
+class BotCustomActions(TemplateBot):
     def __init__(self):
         super().__init__()
-        self.bet_limit = random.randint(0, 100)
-        self.call_limit = random.randint(0, self.bet_limit)
-
-    def refresh_limits(self):
-        self.bet_limit = random.randint(0, 100)
-        self.call_limit = random.randint(0, self.bet_limit)
+        self.bet_limit = 75
+        self.call_limit = 50
 
     def do_action(self):
         if super().is_skip():

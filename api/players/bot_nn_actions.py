@@ -4,7 +4,7 @@ from api.helpers.model import Model
 from api.players.template_bot import TemplateBot
 
 
-class BotWithNNActions(TemplateBot):
+class BotNNActions(TemplateBot):
     def __init__(self):
         super().__init__()
 
