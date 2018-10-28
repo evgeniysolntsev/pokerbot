@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from termcolor import colored
 
 import config
@@ -14,6 +16,7 @@ class LearningModeInputsCards:
         self.X = []
         self.Y = []
         self.temp_map = {}
+        self.start_time = datetime.now().minute
 
     def set_item(self, key, value):
         self.temp_map.__setitem__(key, value)
@@ -38,11 +41,11 @@ class LearningModeInputsCards:
             winner = CoreAction.get_winner()
 
             for player in Core.players:
-                result = [0, 1]
+                result = [0, 0, 0, 0, 0, 0.2, 0.2, 0.2, 0.2, 0.2]
                 if player.id == winner.id:
-                    result = [1, 0]
+                    result = [0.2, 0.2, 0.2, 0.2, 0.2, 0, 0, 0, 0, 0]
                 if draw:
-                    result = [0, 0]
+                    result = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 for s in range(4):
                     self.Y.append(result)
 
@@ -53,6 +56,8 @@ class LearningModeInputsCards:
         if (len_x % 100000) == 0:
             print(colored(len_x, 'red'))
         if len_x > config.FIT_QUANTITY:
+            print("End data generation")
+            print(colored(datetime.now().minute - self.start_time, "red"))
             Model.init_tf_model_with_input_cards()
             Model.dnn.fit(
                 X_inputs=self.X,
@@ -62,6 +67,8 @@ class LearningModeInputsCards:
                 show_metric=config.SHOW_METRIC
             )
             Model.dnn.save(config.PATH_NN_INPUTS_CARDS)
+            print("End fitting model")
+            print(colored(datetime.now().minute - self.start_time, "red"))
             return False
         else:
             return True

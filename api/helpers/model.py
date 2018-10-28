@@ -28,7 +28,7 @@ class Model:
 
         model = tflearn.fully_connected(model, 2000, activation="RElu")
         model = tflearn.fully_connected(model, 500, activation="RElu")
-        model = tflearn.fully_connected(model, 2, activation="softmax")
+        model = tflearn.fully_connected(model, 10, activation="sigmoid")
         model = tflearn.regression(model, optimizer='Momentum', loss='mean_square', learning_rate=0.01)
 
         self.dnn = tflearn.DNN(model)

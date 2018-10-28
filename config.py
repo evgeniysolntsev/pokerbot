@@ -10,8 +10,17 @@ ETERNAL_MODE_AFTER_LOSING_PLAYER_ADDING_POINTS = False
 LEARNING_MODE = True
 PREDICTING_MODE = False
 PLAYING_MODE = False
+# ======================================================================================================================
 #               Start point on hand when game beginning
+# ======================================================================================================================
 START_POINTS = 50
+# ======================================================================================================================
+#               For example, AsAdQdQsKs4s5d
+#               AsAd on hand
+#               QdQsKs on flop
+#               4s on turn
+#               5d on river
+PREDICTING_DATA = 'AsAdQdQsKs4s5d'
 # ======================================================================================================================
 #               Types of neural network - only one variable may be equals true
 #               *Only one variable may be equals true
@@ -35,7 +44,7 @@ RANGE_CARDS_ON_HAND = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 #               Variables of fitting neural network
 N_EPOCH = 80
 VALIDATION_SET = 0.1
-FIT_QUANTITY = 300000
+FIT_QUANTITY = 3000000
 SHOW_METRIC = True
 # ======================================================================================================================
 

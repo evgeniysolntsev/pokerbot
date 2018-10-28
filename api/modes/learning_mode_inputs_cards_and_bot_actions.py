@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from termcolor import colored
 
 import config
@@ -14,6 +16,7 @@ class LearningModeInputsCardsAndBotActions:
         self.X = []
         self.Y = []
         self.temp_map = {}
+        self.start_time = datetime.now().minute
 
     def set_item(self, key, value):
         self.temp_map.__setitem__(key, value)
@@ -54,6 +57,8 @@ class LearningModeInputsCardsAndBotActions:
         if (len_x % 100000) == 0:
             print(colored(len_x, 'red'))
         if len_x > config.FIT_QUANTITY:
+            print("End data generation")
+            print(colored(datetime.now().minute - self.start_time, "red"))
             Model.init_tf_model_with_input_cards_and_bot_actions()
             Model.dnn.fit(
                 X_inputs=self.X,
@@ -63,6 +68,8 @@ class LearningModeInputsCardsAndBotActions:
                 show_metric=config.SHOW_METRIC
             )
             Model.dnn.save(config.PATH_NN_INPUTS_CARDS_AND_BOT_ACTIONS)
+            print("End fitting model")
+            print(colored(datetime.now().minute - self.start_time, "red"))
             return False
         else:
             return True
