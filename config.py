@@ -2,14 +2,14 @@
 #               1st. When is defined winner, then game will start from the beginning, so to eternal
 #               2nd. After player losing game, he gets again start points
 ETERNAL_MODE = False
-ETERNAL_MODE_AFTER_LOSING_PLAYER_ADDING_POINTS = False
+ETERNAL_MODE_AFTER_LOSING_PLAYER_ADDING_POINTS = True
 # ======================================================================================================================
 #               If enable need define type nn with count inputs, its boolean variables below
 #               NN_WITH_INPUTS_ONLY_CARDS, NN_INPUTS_WITH_CARDS_AND_BOT_ACTION
 #               *Only one variable may be equals true
-LEARNING_MODE = False
+LEARNING_MODE = True
 PREDICTING_MODE = False
-PLAYING_MODE = True
+PLAYING_MODE = False
 #               Start point on hand when game beginning
 START_POINTS = 50
 # ======================================================================================================================
@@ -26,8 +26,8 @@ BOT_NAMES = {
 }
 # ======================================================================================================================
 #               Additional info in console
-OUTPUT_IN_CONSOLE = True
-TEST_INFO = False
+OUTPUT_IN_CONSOLE = False
+TEST_INFO = True
 # ======================================================================================================================
 #               10-14 equally T-A cards
 RANGE_CARDS_ON_HAND = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
@@ -35,7 +35,7 @@ RANGE_CARDS_ON_HAND = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 #               Variables of fitting neural network
 N_EPOCH = 40
 VALIDATION_SET = 0.1
-FIT_QUANTITY = 8300000
+FIT_QUANTITY = 100000
 SHOW_METRIC = True
 # ======================================================================================================================
 

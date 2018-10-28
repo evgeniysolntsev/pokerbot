@@ -1,3 +1,5 @@
+from termcolor import colored
+
 import config
 from api.poker.state import State
 
@@ -94,3 +96,10 @@ BOT_RANDOM_ACTIONS = config.LEARNING_MODE and config.NN_INPUTS_CARDS_AND_BOT_ACT
 BOT_CUSTOM_ACTIONS = config.PLAYING_MODE and config.NN_INPUTS_CARDS
 BOT_NN_ACTIONS = config.PLAYING_MODE and config.NN_INPUTS_CARDS_AND_BOT_ACTIONS
 BOT_ALWAYS_SKIP = config.LEARNING_MODE and config.NN_INPUTS_CARDS
+
+if bool(config.LEARNING_MODE) + bool(config.PLAYING_MODE) + bool(config.PREDICTING_MODE) != 1:
+    print(colored("\t\t\t\t\t\tONLY ONE VARIABLE MAY BE EQUALS TRUE (LEARNING_MODE, PLAYING_MODE, PREDICTING_MODE)", "red"))
+    exit(0)
+if bool(config.NN_INPUTS_CARDS_AND_BOT_ACTIONS) + bool(config.NN_INPUTS_CARDS) != 1:
+    print(colored("\t\t\t\t\t\tONLY ONE VARIABLE MAY BE EQUALS TRUE (NN_INPUTS_CARDS_AND_BOT_ACTIONS, NN_INPUTS_CARDS)", "red"))
+    exit(0)
