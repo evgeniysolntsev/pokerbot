@@ -31,7 +31,7 @@ class LearningModeInputsCardsAndBotActions:
                 self.set_item(player.id, [])
         for player in Core.players:
             temp_array = self.get_item(player.id)
-            temp_array.append(utils.get_array_inputs_cards(player))
+            temp_array.append(utils.get_array_inputs_cards_and_bot_actions(player))
             self.set_item(player.id, temp_array)
 
         if len(Core.players[0].table) > 4 or CoreAction.is_new_game():
@@ -52,7 +52,7 @@ class LearningModeInputsCardsAndBotActions:
             self.temp_map.clear()
         len_x = len(self.X)
         if (len_x % 100000) == 0:
-            print(colored(len(self.X), 'red'))
+            print(colored(len_x, 'red'))
         if len_x > config.FIT_QUANTITY:
             Model.init_tf_model_with_input_cards_and_bot_actions()
             Model.dnn.fit(

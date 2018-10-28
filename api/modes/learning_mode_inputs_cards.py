@@ -51,7 +51,7 @@ class LearningModeInputsCards:
             self.temp_map.clear()
         len_x = len(self.X)
         if (len_x % 100000) == 0:
-            print(colored(len(self.X), 'red'))
+            print(colored(len_x, 'red'))
         if len_x > config.FIT_QUANTITY:
             Model.init_tf_model_with_input_cards()
             Model.dnn.fit(
