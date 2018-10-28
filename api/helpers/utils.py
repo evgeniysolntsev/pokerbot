@@ -56,9 +56,6 @@ def get_array_inputs_cards_and_bot_actions(bot=None, call_limit=0, bet_limit=0):
     return temp
 
 
-if config.PLAYING_MODE or config.PREDICTING_MODE:
-    config.NN_INPUTS_CARDS_AND_BOT_ACTIONS = True
-    config.NN_INPUTS_CARDS = False
 COUNT_PLAYERS = len(config.HUMAN_NAMES)
 COUNT_BOT_PLAYERS = len(config.BOT_NAMES)
 COUNT_ALL_PLAYERS = COUNT_PLAYERS + COUNT_BOT_PLAYERS

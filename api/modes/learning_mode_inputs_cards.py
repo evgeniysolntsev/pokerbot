@@ -1,3 +1,5 @@
+from termcolor import colored
+
 import config
 from api.helpers import utils
 from api.helpers.model import Model
@@ -47,8 +49,10 @@ class LearningModeInputsCards:
             for player in Core.players:
                 self.X.extend(self.get_item(player.id))
             self.temp_map.clear()
-
-        if len(self.X) > config.FIT_QUANTITY:
+        len_x = len(self.X)
+        if (len_x % 100000) == 0:
+            print(colored(len(self.X), 'red'))
+        if len_x > config.FIT_QUANTITY:
             Model.init_tf_model_with_input_cards()
             Model.dnn.fit(
                 X_inputs=self.X,
