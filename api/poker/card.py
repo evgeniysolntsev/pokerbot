@@ -23,19 +23,6 @@ class Card(object):
             suit = self.suit
         return str(rank) + str(suit)
 
-    def rank_str(self):
-        converted_map = {
-            14: 'A',
-            13: 'K',
-            12: 'Q',
-            11: 'J',
-            10: 'T'
-        }
-        rank = converted_map.get(self.rank)
-        if not rank:
-            rank = self.rank
-        return str(rank)
-
     def __eq__(self, other):
         return self.rank == other.rank
 
@@ -53,3 +40,16 @@ class Card(object):
 
     def __ge__(self, other):
         return self.rank >= other.rank
+
+    def rank_str(self):
+        converted_map = {
+            14: 'A',
+            13: 'K',
+            12: 'Q',
+            11: 'J',
+            10: 'T'
+        }
+        rank = converted_map.get(self.rank)
+        if not rank:
+            rank = self.rank
+        return str(rank)
