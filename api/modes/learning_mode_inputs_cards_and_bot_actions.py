@@ -55,7 +55,7 @@ class LearningModeInputsCardsAndBotActions:
             self.temp_map.clear()
         len_x = len(self.X)
         if (len_x % 100000) == 0:
-            print("Size of data : ".format(colored(len_x, 'red')))
+            print("Size of data : {}".format(colored(len_x, 'red')))
         if len_x > config.FIT_QUANTITY:
             print("End data generation with {} minutes".format(colored(datetime.now().minute - self.start_time, "red")))
             Model.init_tf_model_with_input_cards_and_bot_actions()
