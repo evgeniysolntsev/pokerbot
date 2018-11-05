@@ -7,9 +7,9 @@ ETERNAL_MODE_AFTER_LOSING_PLAYER_ADDING_POINTS = False
 #               If enable need define type nn with count inputs, its boolean variables below
 #               NN_WITH_INPUTS_ONLY_CARDS, NN_INPUTS_WITH_CARDS_AND_BOT_ACTION
 #               *Only one variable may be equals true
-LEARNING_MODE = True
-PREDICTING_MODE = False
+LEARNING_MODE = False
 PLAYING_MODE = False
+PREDICTING_MODE = True
 # ======================================================================================================================
 #               Start point on hand when game beginning
 # ======================================================================================================================
@@ -20,7 +20,7 @@ START_POINTS = 50
 #               QdQsKs on flop
 #               4s on turn
 #               5d on river
-PREDICTING_DATA = 'AsAdQdQsKs4s5d'
+PREDICTING_DATA = 'AsAdQdQsKcKh2d'
 # ======================================================================================================================
 #               Types of neural network - only one variable may be equals true
 #               *Only one variable may be equals true

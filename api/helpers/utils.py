@@ -1,6 +1,5 @@
-from termcolor import colored
-
 import config
+from api.helpers.message import print_error
 from api.poker.state import State
 
 
@@ -103,6 +102,10 @@ def get_array_from_stages_for_cards_and_action_bot(pf0, pf1, f0, f1, f2, t, r, c
     return temp
 
 
+if config.PREDICTING_MODE:
+    config.HUMAN_NAMES = {"unknown"}
+    config.BOT_NAMES = {}
+
 COUNT_PLAYERS = len(config.HUMAN_NAMES)
 COUNT_BOT_PLAYERS = len(config.BOT_NAMES)
 COUNT_ALL_PLAYERS = COUNT_PLAYERS + COUNT_BOT_PLAYERS
@@ -142,8 +145,6 @@ BOT_NN_ACTIONS = config.PLAYING_MODE and config.NN_INPUTS_CARDS_AND_BOT_ACTIONS
 BOT_ALWAYS_SKIP = config.LEARNING_MODE and config.NN_INPUTS_CARDS
 
 if (bool(config.LEARNING_MODE) + bool(config.PLAYING_MODE) + bool(config.PREDICTING_MODE)) != 1:
-    print(colored("\t\tONLY ONE VARIABLE MAY BE EQUALS TRUE (LEARNING_MODE, PLAYING_MODE, PREDICTING_MODE)", "red"))
-    exit(0)
+    print_error("\t\tONLY ONE VARIABLE MAY BE EQUALS TRUE (LEARNING_MODE, PLAYING_MODE, PREDICTING_MODE)")
 if (bool(config.NN_INPUTS_CARDS_AND_BOT_ACTIONS) + bool(config.NN_INPUTS_CARDS)) != 1:
-    print(colored("\t\tONLY ONE VARIABLE MAY BE EQUALS TRUE (NN_INPUTS_CARDS_AND_BOT_ACTIONS, NN_INPUTS_CARDS)", "red"))
-    exit(0)
+    print_error("\t\tONLY ONE VARIABLE MAY BE EQUALS TRUE (NN_INPUTS_CARDS_AND_BOT_ACTIONS, NN_INPUTS_CARDS)")
