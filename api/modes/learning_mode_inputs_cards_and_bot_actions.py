@@ -4,7 +4,6 @@ from termcolor import colored
 
 import config
 from api.helpers import utils
-from api.helpers.model import Model
 from api.helpers.singleton import singleton
 from api.poker.core import Core
 from api.poker.core_action import CoreAction
@@ -15,8 +14,8 @@ class LearningModeInputsCardsAndBotActions:
     def __init__(self):
         self.X = []
         self.Y = []
-        self.temp_map = {}
         self.start_time = datetime.now().minute
+        self.comb_map = {}
 
     def set_item(self, key, value):
         self.temp_map.__setitem__(key, value)
@@ -25,7 +24,6 @@ class LearningModeInputsCardsAndBotActions:
         return self.temp_map.__getitem__(key)
 
     def action(self):
-        Model.init_tf_model_with_input_cards(load=True)
         self.do_learning()
 
     def update_data(self):
@@ -58,16 +56,6 @@ class LearningModeInputsCardsAndBotActions:
             print("Size of data : {}".format(colored(len_x, 'red')))
         if len_x > config.FIT_QUANTITY:
             print("End data generation with {} minutes".format(colored(datetime.now().minute - self.start_time, "red")))
-            Model.init_tf_model_with_input_cards_and_bot_actions()
-            Model.dnn.fit(
-                X_inputs=self.X,
-                Y_targets=self.Y,
-                n_epoch=config.N_EPOCH,
-                validation_set=config.VALIDATION_SET,
-                batch_size=config.BATCH_SIZE,
-                show_metric=config.SHOW_METRIC
-            )
-            Model.dnn.save(config.PATH_NN_INPUTS_CARDS_AND_BOT_ACTIONS)
             print("End fitting model with {} minutes".format(colored(datetime.now().minute - self.start_time, "red")))
             return False
         else:

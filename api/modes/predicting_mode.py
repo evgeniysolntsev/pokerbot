@@ -1,6 +1,5 @@
 from termcolor import colored
 
-from api.helpers.model import Model
 from api.helpers.utils import *
 from api.poker.card import Card
 
@@ -46,10 +45,10 @@ class PredictingMode(object):
         pd = config.PREDICTING_DATA
         pd_len = pd.__len__()
         if pd and pd_len % 2 == 0:
-            if config.NN_INPUTS_CARDS:
-                Model.init_tf_model_with_input_cards(load=True)
-            else:
-                Model.init_tf_model_with_input_cards_and_bot_actions(load=True)
+            # if config.NN_INPUTS_CARDS:
+            #     Model.init_tf_model_with_input_cards(load=True)
+            # else:
+            #     Model.init_tf_model_with_input_cards_and_bot_actions(load=True)
 
             pf0 = validate_string(Card(pd[0], pd[1])) if pd_len > 1 else None
             pf1 = validate_string(Card(pd[2], pd[3])) if pd_len > 3 else None

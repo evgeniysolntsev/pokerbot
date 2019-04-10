@@ -1,5 +1,5 @@
 from api.helpers import utils
-from api.helpers.model import Model
+# from api.helpers.model import Model
 from api.players.template_bot import TemplateBot
 
 
@@ -12,5 +12,5 @@ class BotCustomActions(TemplateBot):
     def do_action(self):
         if super().is_skip():
             return 0
-        self.predict_result = Model.dnn.predict([utils.get_array_inputs_cards(self)])[0][0]
+        # self.predict_result = Model.dnn.predict([utils.get_array_inputs_cards(self)])[0][0]
         super().do_action()

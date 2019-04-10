@@ -8,7 +8,7 @@ if __name__ == '__main__':
     if config.PLAYING_MODE:
         GamingMode.action()
     elif config.LEARNING_MODE and config.NN_INPUTS_CARDS:
-        LearningModeInputsCards.action()
+        LearningModeInputsCards.do_play()
     elif config.LEARNING_MODE and config.NN_INPUTS_CARDS_AND_BOT_ACTIONS:
         LearningModeInputsCardsAndBotActions.action()
     elif config.PREDICTING_MODE:

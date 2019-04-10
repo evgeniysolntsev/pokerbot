@@ -16,6 +16,11 @@ class TemplatePlayer:
         self.big_blind = False
         self.did_action = False
         self.all_in_bank = None
+        self.hand_str = ''
+        self.table_str = ''
+        self.flop_str = ''
+        self.turn_str = ''
+        self.river_str = ''
         self.action_states = {
             "PreFlop": ActionState(),
             "Flop": ActionState(),
@@ -295,3 +300,26 @@ class TemplatePlayer:
         self.did_action = True
         if self.is_next():
             return True
+
+    def init_str(self):
+        self.hand_str = "".join([h.rank_str() + h.suit for h in self.hand])
+        self.table_str = "".join([h.rank_str() + h.suit for h in self.table])
+        self.flop_str = self.hand_str + self.table_str[:6]
+        self.turn_str = self.hand_str + self.table_str[:8]
+        self.river_str = self.hand_str + self.table_str[:10]
+
+    def get_hand_str(self):
+        self.init_str()
+        return self.hand_str
+
+    def get_flop_str(self):
+        self.init_str()
+        return self.flop_str
+
+    def get_turn_str(self):
+        self.init_str()
+        return self.turn_str
+
+    def get_river_str(self):
+        self.init_str()
+        return self.river_str

@@ -39,16 +39,12 @@ OUTPUT_IN_CONSOLE = False
 TEST_INFO = True
 # ======================================================================================================================
 #               10-14 equally T-A cards
-RANGE_CARDS_ON_HAND = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+RANGE_CARDS_ON_HAND = [10, 11, 12, 13, 14]
 # ======================================================================================================================
 #               Variables of fitting neural network
 N_EPOCH = 40
 VALIDATION_SET = 0.1
-FIT_QUANTITY = 1000000
+FIT_QUANTITY = 100000000
 BATCH_SIZE = 64
 SHOW_METRIC = True
 # ======================================================================================================================
-
-ABSOLUTE_PATH_TO_FOLDER_SAVED_DNN = "C:\\Users\\usr\PycharmProjects\pokerbot\saved_tensorflow_models\\"
-PATH_NN_INPUTS_CARDS = ABSOLUTE_PATH_TO_FOLDER_SAVED_DNN + "saved_model_inputs_cards"
-PATH_NN_INPUTS_CARDS_AND_BOT_ACTIONS = ABSOLUTE_PATH_TO_FOLDER_SAVED_DNN + "saved_model_inputs_cards_and_bot_actions"
