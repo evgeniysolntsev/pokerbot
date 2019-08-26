@@ -1,3 +1,5 @@
+from termcolor import colored
+
 import config
 from api.helpers import utils
 from api.poker.bank import Bank
@@ -208,7 +210,7 @@ class TemplatePlayer:
                 self.points = self.points - bet
             self.set_cur_points_in_bank(bet)
             if config.OUTPUT_IN_CONSOLE:
-                print('{} call: {}'.format(self.id, bet))
+                print(colored('{} call: {:.1f}'.format(self.id, bet), 'magenta'))
             return 0
         elif bet > max_bet:
             self.points = self.points - bet
@@ -219,7 +221,7 @@ class TemplatePlayer:
         Bank.set_bet(bet=bet)
         self.did_action = True
         if config.OUTPUT_IN_CONSOLE:
-            print('{} bet: {}'.format(self.id, self.get_cur_points_in_bank()))
+            print(colored('{} bet: {:.1f}'.format(self.id, self.get_cur_points_in_bank()), 'magenta'))
 
     def do_call(self):
         from api.poker.core_action import CoreAction
@@ -244,15 +246,16 @@ class TemplatePlayer:
             Bank.add_to_bank(points=max_bet)
             self.points = 0
         if config.OUTPUT_IN_CONSOLE:
-            print('{} call: {}'.format(self.id, max_bet))
+            print(colored('{} call: {:.1f}'.format(self.id, max_bet), 'magenta'))
 
     def do_fold(self):
         from api.poker.core_action import CoreAction
+        from api.players.player import Player
         if self.get_all_in():
             if config.OUTPUT_IN_CONSOLE:
                 print('{} all_in'.format(self.id))
             return 0
-        elif self.get_cur_points_in_bank() == CoreAction.get_max_points_in_bank():
+        elif self.get_cur_points_in_bank() == CoreAction.get_max_points_in_bank() and not isinstance(self, Player):
             if config.OUTPUT_IN_CONSOLE:
                 print('{} check'.format(self.id))
             return 0
@@ -284,12 +287,14 @@ class TemplatePlayer:
         from api.poker.core import Core
         i = 0
         j = 0
+        my_score = self.get_cur_points_in_bank()
+        max_score = max([p.get_cur_points_in_bank() if p.get_cur_points_in_bank() else 0 for p in Core.players])
         for player in Core.players:
             if not player.get_folded():
                 i = i + 1
             if player.get_all_in():
                 j = j + 1
-        return self.get_folded() or self.get_all_in() or i - j == 1
+        return self.get_folded() or self.get_all_in() or (i - j == 1 and my_score >= max_score)
 
     def is_skip(self):
         self.did_action = True

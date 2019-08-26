@@ -1,3 +1,4 @@
+import numpy as np
 from termcolor import colored
 
 from api.helpers.model import Model
@@ -60,11 +61,11 @@ class PredictingMode(object):
             r = validate_string(Card(pd[12], pd[13])) if pd_len > 13 else None
 
             if config.NN_INPUTS_CARDS:
-                results = Model.dnn.predict([get_array_from_stages_for_cards(pf0, pf1, f0, f1, f2, t, r)])
+                results = Model.dnn.predict(np.array([get_array_from_stages_for_cards(pf0, pf1, f0, f1, f2, t, r)]))
             else:
                 results = Model.dnn.predict(
                     [get_array_from_stages_for_cards_and_action_bot(pf0, pf1, f0, f1, f2, t, r)])
             for r in results:
-                print(colored("\t\tModel predict = {:5f}\n".format(r[0]), "green"))
+                print(colored("\t\tModel predict = {:5f}_{:5f}\n".format(r[0], r[1]), "green"))
         else:
             print_error("Count cards need multiple two")

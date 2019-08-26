@@ -1,7 +1,8 @@
 from datetime import datetime
 
+import numpy as np
+from tensorflow.python.keras.utils import to_categorical
 from termcolor import colored
-
 import config
 from api.helpers import utils
 from api.helpers.model import Model
@@ -28,6 +29,11 @@ class LearningModeInputsCards:
         self.do_learning()
 
     def update_data(self):
+        if len(Core.players[0].table) < 4:
+            return True
+        draw = CoreAction.is_draw()
+        if draw:
+            return True
         if len(self.temp_map) == 0:
             for player in Core.players:
                 self.set_item(player.id, [])
@@ -36,42 +42,38 @@ class LearningModeInputsCards:
             temp_array.append(utils.get_array_inputs_cards(player))
             self.set_item(player.id, temp_array)
 
-        if len(Core.players[0].table) > 4 or CoreAction.is_new_game():
-            draw = CoreAction.is_draw()
-            winner = CoreAction.get_winner()
+        winner = CoreAction.get_winner()
 
-            for player in Core.players:
-                result = [0., 1.]
-                if player.id == winner.id:
-                    result = [1., 0.]
-                if draw:
-                    result = [0., 0.]
-                for s in range(4):
-                    self.Y.append(result)
+        for player in Core.players:
+            result = [0.]
+            if player.id == winner.id:
+                result = [1.]
+            self.Y.append(result)
 
-            for player in Core.players:
-                self.X.extend(self.get_item(player.id))
-            self.temp_map.clear()
+        for player in Core.players:
+            self.X.extend(self.get_item(player.id))
+        self.temp_map.clear()
         len_x = len(self.X)
         if (len_x % 100000) == 0:
             print("Size of data : {}".format(colored(len_x, 'red')))
         if len_x > config.FIT_QUANTITY:
             print("End data generation with {} minutes".format(colored(datetime.now().minute - self.start_time, "red")))
+
             Model.init_tf_model_with_input_cards()
             Model.dnn.fit(
-                X_inputs=self.X,
-                Y_targets=self.Y,
-                n_epoch=config.N_EPOCH,
-                validation_set=config.VALIDATION_SET,
+                x=np.array(self.X),
+                y=to_categorical(self.Y, 2),
+                epochs=config.N_EPOCH,
                 batch_size=config.BATCH_SIZE,
-                show_metric=config.SHOW_METRIC
+                steps_per_epoch=config.STEPS_PER_EPOCH,
+                validation_split=config.VALIDATION_SET
             )
             Model.dnn.save(config.PATH_NN_INPUTS_CARDS)
-            print("End fitting model with {} minutes".format(colored(datetime.now().minute - self.start_time, "red")))
             return False
         else:
             return True
-            # tensorflow.summary.FileWriter('logs', tensorflow.Session().graph)
+
+    # tensorflow.summary.FileWriter('logs', tensorflow.Session().graph)
 
     def do_learning(self):
         CoreAction.random_dealer()
