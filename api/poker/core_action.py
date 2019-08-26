@@ -1,4 +1,5 @@
 import random
+from os import system
 
 from termcolor import colored
 
@@ -20,6 +21,8 @@ class CoreAction(object):
     total_points = None
 
     def playing(self):
+        clear = lambda: system('cls')
+        clear()
         self.random_dealer()
         while self.is_end_game():
             first = self.do_default_state()
@@ -195,7 +198,7 @@ class CoreAction(object):
 
     def print_winner(self):
         self.print_scores()
-        print(colored('Bank {}'.format(Bank.bank), 'red'))
+        print(colored('Bank {:.1f}'.format(Bank.bank), 'red'))
         if self.is_draw():
             print(colored('draw is winner ', 'red'))
         else:
@@ -277,10 +280,12 @@ class CoreAction(object):
                     Core.players = []
                     Core.init_players()
                     CoreAction.random_dealer()
+                    print(colored('new game is start', 'red'))
                 else:
                     winner = Core.players[0]
                     if config.OUTPUT_IN_CONSOLE:
                         print(colored('winner {} with {:.1f} points'.format(winner.id, winner.points), 'red'))
+                    input("Game over")
                     return False
         return True
 

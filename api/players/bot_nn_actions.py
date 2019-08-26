@@ -1,3 +1,5 @@
+import numpy as np
+
 import config
 from api.helpers import utils
 from api.helpers.model import Model
@@ -19,7 +21,7 @@ class BotNNActions(TemplateBot):
             for i in range(50, 100):
                 for j in range(i, 100):
                     predicting_result = Model.dnn.predict(
-                        [utils.get_array_inputs_cards_and_bot_actions(bot=self, call_limit=i, bet_limit=j)])[0][0]
+                        np.array([utils.get_array_inputs_cards_and_bot_actions(bot=self, call_limit=i, bet_limit=j)]))[0][0]
                     if predicting_result > self.predict_result:
                         self.bet_limit = j
                         self.call_limit = i
