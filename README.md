@@ -1,12 +1,15 @@
 Preinstall
 ----
 ```bash
+python > 3.6
+tensorflow > 1.1.4
 pip install --upgrade tensorflow
 pip install --upgrade colored
 ```
-For example vs AI
+For example. vs AI
 ----
 ![alt text](example.png "Title")
+
 Setting config.py
 ----
 ```bash
