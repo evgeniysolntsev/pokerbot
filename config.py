@@ -29,7 +29,7 @@ NN_INPUTS_CARDS_AND_BOT_ACTIONS = True
 # ======================================================================================================================
 #               Names count equally player count, auto generate
 HUMAN_NAMES = {
-    "Human"
+    "YOU"
 }
 BOT_NAMES = {
     "AI"

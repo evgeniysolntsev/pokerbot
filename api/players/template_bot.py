@@ -22,13 +22,19 @@ class TemplateBot(TemplatePlayer):
         self.result_percent = int(self.predict_result * 100)
         self.subtracted_result_percent = int(self.result_percent - self.call_limit)
         self.one_percent_score = self.points / 100
-        if self.result_percent > self.bet_limit:
+        if self.result_percent >= self.bet_limit:
             bet = self.one_percent_score * self.subtracted_result_percent
             self.do_bet(bet=bet)
-        elif self.call_limit < self.result_percent < self.bet_limit:
-            if self.one_percent_score == 0 or self.subtracted_result_percent > int(Bank.bet / self.one_percent_score):
+        elif self.result_percent >= self.call_limit:
+            if self.one_percent_score == 0 or self.subtracted_result_percent > int(Bank.bet / self.one_percent_score) \
+                    or config.PLAYING_MODE:
                 self.do_call()
             else:
                 self.do_fold()
         else:
-            self.do_fold()
+            from api.poker.core import Core
+            max_score = max([p.get_cur_points_in_bank() if p.get_cur_points_in_bank() else 0 for p in Core.players])
+            if max_score <= 1.0:
+                self.do_call()
+            else:
+                self.do_fold()
