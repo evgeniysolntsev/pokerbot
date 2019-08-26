@@ -6,7 +6,7 @@ tensorflow > 1.1.4
 pip install --upgrade tensorflow
 pip install --upgrade colored
 ```
-For example. vs AI
+For example. Result. vs AI
 ----
 ![alt text](example.png "Title")
 
