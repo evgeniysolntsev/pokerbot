@@ -10,7 +10,7 @@ For example. Result. vs AI
 ----
 ![alt text](example.png "Title")
 
-Setting config.py
+Setting config.py [*need your absolute path]
 ----
 ```bash
 # ======================================================================================================================
@@ -71,3 +71,5 @@ PATH_NN_INPUTS_CARDS = ABSOLUTE_PATH_TO_FOLDER_SAVED_DNN + "saved_model_inputs_c
 PATH_NN_INPUTS_CARDS_AND_BOT_ACTIONS = ABSOLUTE_PATH_TO_FOLDER_SAVED_DNN + "saved_model_inputs_cards_and_bot_actions"
 
 ```
+[for more accuracy, need learn model again, now just for test, ~ 75%, 40k data]
+----
