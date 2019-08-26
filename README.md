@@ -1,6 +1,6 @@
 Preinstall
 ----
-python 3.6.* (https://www.python.org/downloads/)<hr>
+python 3.6.* (https://www.python.org/downloads/)
 tensorflow (https://www.tensorflow.org/install/)
 ----
 ```bash
