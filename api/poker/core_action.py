@@ -187,10 +187,10 @@ class CoreAction(object):
             return False
 
     def get_index_winner(self):
-        return [player.get_max_total_point() for player in Core.players].index(self.get_max_point())
+        return [player.get_max_total_point() for player in Core.players].index(self.get_max_comb_point())
 
     def get_winner(self):
-        max_point = self.get_max_point()
+        max_point = self.get_max_comb_point()
         for player in Core.players:
             if not player.get_folded():
                 if player.get_max_total_point() == max_point:
@@ -280,7 +280,8 @@ class CoreAction(object):
                     Core.players = []
                     Core.init_players()
                     CoreAction.random_dealer()
-                    print(colored('new game is start', 'red'))
+                    if config.OUTPUT_IN_CONSOLE:
+                        print(colored('new game is start', 'red'))
                 else:
                     winner = Core.players[0]
                     if config.OUTPUT_IN_CONSOLE:
@@ -331,8 +332,12 @@ class CoreAction(object):
         Core.deck.shuffle()
 
     @staticmethod
-    def get_max_point():
+    def get_max_comb_point():
         return max([player.get_max_total_point() if not player.get_folded() else 0 for player in Core.players])
+
+    @staticmethod
+    def get_max_comb_level():
+        return max([player.get_max_comb_level() if not player.get_folded() else 0 for player in Core.players])
 
     @staticmethod
     def get_max_points_in_bank():

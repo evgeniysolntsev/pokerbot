@@ -6,6 +6,7 @@ class ActionState:
     total_point = 0
 
     def __init__(self):
+        self.comb_level = 0
         self.total_point = 0
         self.points_in_bank = 0
         self.all_in = False

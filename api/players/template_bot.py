@@ -32,9 +32,4 @@ class TemplateBot(TemplatePlayer):
             else:
                 self.do_fold()
         else:
-            from api.poker.core import Core
-            max_score = max([p.get_cur_points_in_bank() if p.get_cur_points_in_bank() else 0 for p in Core.players])
-            if max_score <= 1.0:
-                self.do_call()
-            else:
-                self.do_fold()
+            self.do_fold()

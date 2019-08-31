@@ -49,6 +49,7 @@ class TemplatePlayer:
     def set_full_combination(self, total_point=None, comb_level=None, hand=None):
         current_action = self.get_current_action()
         current_action.total_point = total_point
+        current_action.comb_level = comb_level
         if config.OUTPUT_IN_CONSOLE:
             combination_map = {
                 1: '{} combination: high {}{}{}{}{}',
@@ -76,6 +77,12 @@ class TemplatePlayer:
             return 0
         else:
             return max([state.total_point for state in self.action_states.values()])
+
+    def get_max_comb_level(self):
+        if self.get_folded():
+            return 0
+        else:
+            return max([state.comb_level for state in self.action_states.values()])
 
     def set_player_state(self, d=False, sb=False, bb=False):
         self.dealer = d
