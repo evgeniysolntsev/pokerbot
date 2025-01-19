@@ -1,8 +1,9 @@
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.layers import Dense
-from tensorflow.python.keras.callbacks import ModelCheckpoint
-from tensorflow.python.keras.utils import to_categorical
+from tensorflow.keras.callbacks import ModelCheckpoint
+from tensorflow.keras.utils import to_categorical
+from tensorflow.python.framework import ops
 
 import config
 from api.helpers.singleton import singleton
@@ -13,16 +14,14 @@ class Model:
     dnn = {}
 
     def init_tf_model_with_input_cards(self, load=False):
-        tf.reset_default_graph()
+        ops.reset_default_graph()
 
         model = tf.keras.Sequential()
         model.add(Dense(units=68, activation='elu', input_shape=[68, ]))
         model.add(Dense(units=34, activation='elu'))
         model.add(Dense(units=17, activation='elu'))
         model.add(Dense(units=2, activation='softmax'))
-        model.compile(optimizer=tf.train.MomentumOptimizer(learning_rate=.01, momentum=.9),
-                      loss='categorical_crossentropy',
-                      metrics=['accuracy'])
+        model.compile(loss='categorical_crossentropy', optimizer='adam')
         # model.save(config.PATH_NN_INPUTS_CARDS_AND_BOT_ACTIONS)
         self.dnn = model
         if load:

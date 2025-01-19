@@ -2,7 +2,10 @@ from termcolor import colored
 
 import config
 from api.helpers import utils
+from api.helpers.message import print_error
+from api.helpers.utils import get_colored_card
 from api.poker.bank import Bank
+from api.poker.card import Card
 from api.poker.state import State
 from api.poker.state_action import ActionState
 
@@ -52,24 +55,34 @@ class TemplatePlayer:
         current_action.comb_level = comb_level
         if config.OUTPUT_IN_CONSOLE:
             combination_map = {
-                1: '{} combination: high {}{}{}{}{}',
-                2: '{} combination: one pair {}{} with high {}{}{}',
-                3: '{} combination: two pair {}{}{}{} with high {}',
-                4: '{} combination: three of kind {}{}{} with high {}{}',
-                5: '{} combination: straight {}{}{}{}{}',
-                6: '{} combination: flush {}{}{}{}{}',
-                7: '{} combination: full house {}{}{}{}{}',
-                8: '{} combination: four {}{}{}{} with high {}',
-                9: '{} combination: straight flush {}{}{}{}{}',
-                10: '{} combination: royal flush {}{}{}{}{}',
+                1: '{} {} combination: high {}{}{}{}{}',
+                2: '{} {} combination: one pair {}{} with high {}{}{}',
+                3: '{} {} combination: two pair {}{}{}{} with high {}',
+                4: '{} {} combination: three of kind {}{}{} with high {}{}',
+                5: '{} {} combination: straight {}{}{}{}{}',
+                6: '{} {} combination: flush {}{}{}{}{}',
+                7: '{} {} combination: full house {}{}{}{}{}',
+                8: '{} {} combination: four {}{}{}{} with high {}',
+                9: '{} {} combination: straight flush {}{}{}{}{}',
+                10: '{} {} combination: royal flush {}{}{}{}{}',
             }
+            all_card = []
+            all_card.extend(hand)
+            for card in all_card:
+                i = 0
+                if self.hand[0].rank == card.rank and self.hand[0].suit == card.suit:
+                    i = i + 1
+                if i > 1:
+                    print_error("wrong case")
+                    break
+
             current_action.combination_str = combination_map.get(comb_level).format(
-                self.id,
-                str(hand[0]) if len(hand) > 0 else '',
-                str(hand[1]) if len(hand) > 1 else '',
-                str(hand[2]) if len(hand) > 2 else '',
-                str(hand[3]) if len(hand) > 3 else '',
-                str(hand[4]) if len(hand) > 4 else ''
+                self.id, get_colored_card(self.hand[0]) + ' ' + get_colored_card(self.hand[1]),
+                get_colored_card(hand[0]) if len(hand) > 0 else '',
+                get_colored_card(hand[1]) if len(hand) > 1 else '',
+                get_colored_card(hand[2]) if len(hand) > 2 else '',
+                get_colored_card(hand[3]) if len(hand) > 3 else '',
+                get_colored_card(hand[4]) if len(hand) > 4 else ''
             )
 
     def get_max_total_point(self):
@@ -94,6 +107,9 @@ class TemplatePlayer:
 
     def get_current_action(self):
         return self.action_states.__getitem__(State.get())
+
+    def get_current_state(self):
+        return State.get()
 
     def reset_action_states(self):
         self.action_states = {
@@ -307,3 +323,51 @@ class TemplatePlayer:
         self.did_action = True
         if self.is_next():
             return True
+
+    def compute_points_by_self(self):
+        full_hand = []
+        full_hand.extend(self.hand)
+        full_hand.extend(self.table)
+        from api.poker.core import Core
+        Core.player_sorted_hand = sorted(full_hand, reverse=True)
+        Core.set_player(player=self)
+        if not State.pre_flop:
+            Core.is_royal()
+        else:
+            Core.is_one()
+
+    def compute_points_by_other(self):
+        default = self.hand
+        table = self.table
+        all_card = []
+        all_combination = []
+        for suit in State.SUITS:
+            for rank in State.RANKS:
+                for old_table in table:
+                    if old_table.rank == rank and old_table.suit == suit:
+                        continue
+                    elif default[0].rank == rank and default[0].suit == suit:
+                        continue
+                    elif default[1].rank == rank and default[1].suit == suit:
+                        continue
+                    else:
+                        all_card.append(Card(rank, suit))
+        all_comb_str = []
+        for first_card in all_card:
+            for sec_card in all_card:
+                if first_card == sec_card:
+                    continue
+                hand = [first_card, sec_card]
+                self.set_hand(hand)
+                str_hand = str(hand[0]) + str(hand[1])
+                if all_comb_str.count(str_hand) > 0:
+                    continue
+                self.compute_points_by_self()
+                total = self.get_max_total_point()
+                if all_combination.count(total) == 0:
+                    all_combination.append(total)
+                all_comb_str.append(str_hand)
+
+        self.set_hand(default)
+        all_combination.sort(reverse=True)
+        return all_combination

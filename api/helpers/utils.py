@@ -1,13 +1,15 @@
 import config
 from api.helpers.message import print_error
 from api.poker.state import State
-
+from termcolor import colored
 
 def get_array_for_cards_from_map(m=None):
     return get_array_from_stages_for_cards(
         m.get('pf0'), m.get('pf1'), m.get('f0'), m.get('f1'), m.get('f2'), m.get('t'), m.get('r')
     )
 
+def get_colored_card(c=None):
+    return colored(str(c), 'green' if c.suit == 's' or c.suit == 'c' else 'red')
 
 def get_array_inputs_cards(player=None):
     hand, table, pf0, pf1, f0, f1, f2, t, r = player.hand, player.table, None, None, None, None, None, None, None

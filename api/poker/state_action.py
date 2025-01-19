@@ -1,7 +1,8 @@
 class ActionState:
     points_in_bank = None
     all_in = False
-    folded = False
+    action = None
+    predict = 0
     combination_str = None
     total_point = 0
 
@@ -10,5 +11,7 @@ class ActionState:
         self.total_point = 0
         self.points_in_bank = 0
         self.all_in = False
+        self.action = 'nope'
         self.folded = False
+        self.predict = 0
         self.combination_str = None

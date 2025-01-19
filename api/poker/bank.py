@@ -6,7 +6,7 @@ from api.helpers.singleton import singleton
 class Bank:
     bank = 0
     bet = 0
-    step = config.START_POINTS / 100
+    step = config.START_POINTS / 1000
 
     def set_bank(self, bank=None):
         self.bank = bank

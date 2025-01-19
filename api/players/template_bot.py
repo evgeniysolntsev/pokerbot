@@ -1,7 +1,8 @@
+from termcolor import colored
+
 import config
 from api.helpers import utils
 from api.players.template_player import TemplatePlayer
-from api.poker.bank import Bank
 
 
 class TemplateBot(TemplatePlayer):
@@ -17,19 +18,26 @@ class TemplateBot(TemplatePlayer):
 
     def do_action(self):
         if config.TEST_INFO and config.OUTPUT_IN_CONSOLE:
-            print("{} bet {} call {} predict {}"
-                  .format(self.id, self.bet_limit, self.call_limit, self.predict_result))
+            print(colored("[{}] bet {} call {} predict [{}]"
+                          .format(self.id, self.bet_limit, self.call_limit, self.predict_result), 'red'))
         self.result_percent = int(self.predict_result * 100)
         self.subtracted_result_percent = int(self.result_percent - self.call_limit)
         self.one_percent_score = self.points / 100
+        self.get_current_action().predict = self.get_max_total_point()
         if self.result_percent >= self.bet_limit:
             bet = self.one_percent_score * self.subtracted_result_percent
-            self.do_bet(bet=bet)
-        elif self.result_percent >= self.call_limit:
-            if self.one_percent_score == 0 or self.subtracted_result_percent > int(Bank.bet / self.one_percent_score) \
-                    or config.PLAYING_MODE:
-                self.do_call()
+            if self.result_percent == 1:
+                self.get_current_action().action = 'allin'
+                self.do_bet(bet=self.points)
             else:
-                self.do_fold()
+                self.get_current_action().action = 'bet'
+                self.do_bet(bet=bet)
+
+        elif self.result_percent >= self.call_limit:
+            self.do_call()
+            self.get_current_action().action = 'call'
         else:
-            self.do_fold()
+            if self.do_fold() == 0:
+                self.get_current_action().action = 'check'
+            else:
+                self.get_current_action().action = 'fold'

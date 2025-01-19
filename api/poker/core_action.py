@@ -1,6 +1,7 @@
 import random
 from os import system
 
+import psycopg2
 from termcolor import colored
 
 import config
@@ -15,10 +16,14 @@ from api.poker.state import State
 
 @singleton
 class CoreAction(object):
+    count_game = 0
     max_total_points = None
     count_winners = None
     count_winners_final = None
     total_points = None
+    conn = None
+    cursor = None
+    template_insert_sql = "insert INTO smev_service.test_table(action_preflop,action_flop,action_turn,action_river,stage,hand_0,hand_1,table_0,table_1,table_2,table_3,table_4,predict_preflop,predict_flop,predict_turn,predict_river,win,number) values ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');"
 
     def playing(self):
         clear = lambda: system('cls')
@@ -36,7 +41,55 @@ class CoreAction(object):
                 self.end_stage()
                 if self.is_new_game():
                     break
-            self.set_points_winner()
+            players = self.set_points_winner()
+            self.save_result(players)
+
+    def save_result(self, players):
+        if self.conn is None:
+            self.conn = psycopg2.connect(dbname='smev_service_db', user='smev_service_user',
+                                         password='smev_service_user_password', host='localhost')
+        commit = False
+        winner = self.get_winner()
+        for player in players:
+            state = player.get_current_state()
+            if player.hand[0].rank < 10 or player.hand[1].rank < 10:
+                continue
+            win = False
+            if player == winner:
+                win = True
+            preflop = player.get_action_state_by_key('PreFlop')
+            if preflop.action == 'fold':
+                continue
+            flop = player.get_action_state_by_key('Flop')
+            turn = player.get_action_state_by_key('Turn')
+            river = player.get_action_state_by_key('River')
+            if preflop.predict == 0:
+                continue
+
+            sql = self.template_insert_sql.format(
+                preflop.action, flop.action, turn.action, river.action, state,
+                self.get_str_card(player.hand[0]),
+                self.get_str_card(player.hand[1]),
+                self.get_str_card(player.table[0]) if len(player.table) > 0 else '',
+                self.get_str_card(player.table[1]) if len(player.table) > 1 else '',
+                self.get_str_card(player.table[2]) if len(player.table) > 2 else '',
+                self.get_str_card(player.table[3]) if len(player.table) > 3 else '',
+                self.get_str_card(player.table[4]) if len(player.table) > 4 else '',
+                preflop.predict, flop.predict, turn.predict, river.predict, win, self.count_game
+            )
+            self.conn.cursor().execute(sql)
+            commit = True
+        try:
+            if commit is True:
+                self.conn.commit()
+        except:
+            # в случае сбоя подключения будет выведено сообщение в STDOUT
+            print('Can`t establish connection to database')
+
+    def get_str_card(self, card):
+        if card is None:
+            return ''
+        return str(card.rank) + str(card.suit)
 
     def next_stage(self):
         if config.OUTPUT_IN_CONSOLE:
@@ -60,18 +113,15 @@ class CoreAction(object):
     def new_game(self):
         self.default_deck()
         self.shuffle_ranged_hand()
-
-        temp_ranged_hand = []
-        temp_ranged_hand.extend(Core.ranged_hand)
+        self.count_game = self.count_game + 1
         for player in Core.players:
             player.hand.clear()
             player.table.clear()
             if utils.BOT_RANDOM_ACTIONS:
                 player.refresh_limits()
             for h in range(0, 2):
-                card = temp_ranged_hand.pop(0)
+                card = Core.deck.pull()
                 player.hand.append(card)
-                Core.deck.deck.remove(card)
 
     def compute_count_winners(self):
         self.total_points = [p.get_max_total_point() if not p.get_folded() else 0 for p in Core.players]
@@ -96,6 +146,7 @@ class CoreAction(object):
             if config.OUTPUT_IN_CONSOLE:
                 self.convert_get_message(player_winner.id, Bank.bank)
             player_winner.add_points(Bank.bank)
+        return Core.players
 
     def set_winners(self, player):
         if self.is_winners_end():
@@ -208,8 +259,8 @@ class CoreAction(object):
     def print_table():
         cs = ''
         for c in Core.players[0].table:
-            cs = cs + str(c) + '  '
-        print(colored('Table: ' + cs, 'blue'))
+            cs = cs + colored(str(c), 'green' if c.suit == 's' or c.suit == 'c' else 'red') + '  '
+        print('Table: ' + cs)
 
     @staticmethod
     def compute_points():
@@ -217,16 +268,22 @@ class CoreAction(object):
             full_hand = []
             full_hand.extend(player.hand)
             full_hand.extend(player.table)
-            if State.output_in_console:
-                cs = ''
+            if State.output_in_console and not player.get_folded():
                 i = 0
+                cs = ''
                 for c in player.hand:
-                    if i < 2 and isinstance(player, TemplateBot) and not config.TEST_INFO:
-                        c = '? '
                     i = i + 1
-                    cs = cs + str(c) + '  '
-                print(colored('{} : {} \t\t\t\t points : {:.1f}'.format(str(player.id), cs[:-1], player.points),
-                              'yellow'))
+                    cs = cs + '['
+                    if isinstance(player, TemplateBot) and not config.ONLY_TEST_INFO_CARD:
+                        c = '? '
+                        cs = cs + '' + colored('{}'.format(str(c)), 'blue')
+                    else:
+                        cs = cs + '' + colored('{}'.format(str(c)),
+                                               'green' if c.suit == 's' or c.suit == 'c' else 'red')
+                    cs = cs + ']'
+
+                print('{}:{}'.format(str(player.id), cs))
+                print(colored('points : [{:.1f}]'.format(player.points), 'white'))
             Core.player_sorted_hand = sorted(full_hand, reverse=True)
             Core.set_player(player=player)
             if not State.pre_flop:

@@ -9,6 +9,6 @@ class GamingMode(object):
 
     @staticmethod
     def action():
-        if config.NN_INPUTS_CARDS:
-            Model.init_tf_model_with_input_cards(load=True)
+        # if config.NN_INPUTS_CARDS:
+        #     Model.init_tf_model_with_input_cards(load=True)
         CoreAction.playing()
